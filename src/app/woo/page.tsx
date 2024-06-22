@@ -161,6 +161,7 @@ export default async function Page(): Promise<JSX.Element> {
                 "after:absolute after:left-0 after:top-0 after:h-full after:w-2 after:rounded-bl-xl after:rounded-tl-xl after:content-['']",
                 positionSide === 'LONG' ? 'after:bg-green-500' : 'after:bg-red-500',
               )}
+              key={`${symbol}-${positionSide}`}
             >
               <div className="flex justify-between">
                 <div>
