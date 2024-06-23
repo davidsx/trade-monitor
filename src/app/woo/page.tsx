@@ -121,17 +121,21 @@ export default async function Page(): Promise<JSX.Element> {
     { unrealized: 0, realized: 0, fee: 0 },
   );
 
-  const balance = accountInfo.data.totalAccountValue - unrealized;
-  const unrealized_percent = (unrealized / balance) * 100;
+  const balance = accountInfo.data.totalAccountValue - unrealized - realized;
+  const unrealized_percent = (unrealized / (balance - realized)) * 100;
+  const realized_percent = (realized / (balance - realized)) * 100;
 
   const getTextColor = (value: number) =>
     cn('text-gray-500', value > 0 && 'text-green-500', value < 0 && 'text-red-500');
 
   return (
-    <div className="flex h-screen flex-col gap-4 bg-[#171717] p-4 text-[#C6C7C8]">
+    <div className="flex min-h-screen flex-col gap-4 bg-[#171717] p-4 text-[#C6C7C8]">
       <h1 className="text-4xl">WOO X</h1>
       <section className="flex flex-col gap-2">
-        <h2 className="text-2xl">Portfolio</h2>
+        <h2 className="text-2xl">
+          Portfolio
+          <span className="opacity-50"> ({accountInfo.data.totalAccountValue.toFixed(2)})</span>
+        </h2>
         <div className="text-sm">
           <div className="flex gap-2">
             <h3 className="text-md opacity-50">Balance</h3>
@@ -147,7 +151,13 @@ export default async function Page(): Promise<JSX.Element> {
           <div className="flex gap-2">
             <h3 className="text-md opacity-50">Daily Realized PnL</h3>
             <span className={getTextColor(realized)}>{realized.toFixed(2)}</span>
-            <span className="opacity-50">(fee: {fee.toFixed(2)})</span>
+            <span className={cn('opacity-50', getTextColor(unrealized))}>
+              ({realized_percent.toFixed(2)}%)
+            </span>
+          </div>
+          <div className="flex gap-2">
+            <h3 className="text-md opacity-50">Fee</h3>
+            <span className="opacity-50">{fee.toFixed(2)}</span>
           </div>
         </div>
         {positionResponse.data.positions.map((position) => {
@@ -166,15 +176,17 @@ export default async function Page(): Promise<JSX.Element> {
               <div className="flex justify-between">
                 <div>
                   {symbol.replace('PERP_', '').replace('_USDT', '')}-PERP{' '}
-                  <span className="text-xs">{averageOpenPrice.toFixed(2)}</span>
+                  {averageOpenPrice > 0 && (
+                    <span className="text-xs">{averageOpenPrice.toFixed(2)}</span>
+                  )}
                 </div>
                 <div className={cn('font-medium', getTextColor(unrealized_pnl))}>
                   {unrealized_pnl.toFixed(2)}
                 </div>
               </div>
               <div className="flex justify-between text-sm opacity-40">
-                <div>fee: {fee24H.toFixed(2)}</div>
-                <div>PnL: {pnl24H.toFixed(2)}</div>
+                <div className="text-gray-500">fee: {fee24H.toFixed(2)}</div>
+                <div className={cn(getTextColor(pnl24H))}>PnL: {pnl24H.toFixed(2)}</div>
               </div>
             </div>
           );
@@ -194,7 +206,6 @@ export default async function Page(): Promise<JSX.Element> {
           <tbody>
             {orderResponse.rows
               .filter(({ realized_pnl }) => realized_pnl !== null)
-              .slice(0, 5)
               .map((order) => (
                 <tr key={order.order_id}>
                   <td>{order.symbol.replace('PERP_', '').replace('_USDT', '')}</td>
