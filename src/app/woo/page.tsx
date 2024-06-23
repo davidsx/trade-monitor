@@ -7,6 +7,8 @@ const wooService = new WooService();
 TimeAgo.addDefaultLocale(en);
 const timeAgo = new TimeAgo('en-US');
 
+export const revalidate = 30;
+
 // type TradeSummary = Record<string, { fee: number; pnl: number; count: number }>;
 export default async function Page(): Promise<JSX.Element> {
   const accountInfo = await wooService.getAccountInfo();
