@@ -75,9 +75,9 @@ export default class WooService {
   }
 
   async getOrders() {
-    const today = (startOfDay(new Date()).getTime() / 1000).toFixed(3);
-    const tmr = (addDays(startOfDay(new Date()), 1).getTime() / 1000).toFixed(3);
-    console.log(today, tmr);
+    // const today = (startOfDay(new Date()).getTime() / 1000).toFixed(3);
+    // const tmr = (addDays(startOfDay(new Date()), 1).getTime() / 1000).toFixed(3);
+    // console.log(today, tmr);
     const data = await this.get<PageResponse<WOOOrder>>(
       `/v1/orders?realized_pnl=true&size=200&status=FILLED`,
     );
@@ -85,9 +85,9 @@ export default class WooService {
   }
 
   async getPositions() {
-    const today = (startOfDay(new Date()).getTime() / 1000).toFixed(3);
-    const tmr = (addDays(startOfDay(new Date()), 1).getTime() / 1000).toFixed(3);
-    console.log(today, tmr);
+    // const today = (startOfDay(new Date()).getTime() / 1000).toFixed(3);
+    // const tmr = (addDays(startOfDay(new Date()), 1).getTime() / 1000).toFixed(3);
+    // console.log(today, tmr);
     const data = await this.get<BasicResponse<{ positions: WOOPosition[] }>>(`/v3/positions`);
     return data;
   }

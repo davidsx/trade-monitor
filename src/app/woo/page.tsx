@@ -1,7 +1,9 @@
+import { CHALLENGE_CONFIG } from '@/config';
 import WooService from '@/service/woo';
 import { cn } from '@/styles';
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
+import Link from 'next/link';
 
 const wooService = new WooService();
 TimeAgo.addDefaultLocale(en);
@@ -126,6 +128,7 @@ export default async function Page(): Promise<JSX.Element> {
   const balance = accountInfo.data.totalAccountValue - unrealized - realized;
   const unrealized_percent = (unrealized / (balance - realized)) * 100;
   const realized_percent = (realized / (balance - realized)) * 100;
+  const fee_percent = (fee / (balance - realized)) * 100;
 
   const getTextColor = (value: number) =>
     cn('text-gray-500', value > 0 && 'text-green-500', value < 0 && 'text-red-500');
@@ -134,10 +137,15 @@ export default async function Page(): Promise<JSX.Element> {
     <div className="flex min-h-screen flex-col gap-4 bg-[#171717] p-4 text-[#C6C7C8]">
       <h1 className="text-4xl">WOO X</h1>
       <section className="flex flex-col gap-2">
-        <h2 className="text-2xl">
-          Portfolio
-          <span className="opacity-50"> ({accountInfo.data.totalAccountValue.toFixed(2)})</span>
-        </h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl">
+            Portfolio
+            <span className="opacity-50"> ({accountInfo.data.totalAccountValue.toFixed(2)})</span>
+          </h2>
+          <Link className="underline underline-offset-2 font-semibold" href="/config">
+            {(CHALLENGE_CONFIG.dailyProfitPercentage * 100).toFixed(2)}%
+          </Link>
+        </div>
         <div className="text-sm">
           <div className="flex gap-2">
             <h3 className="text-md opacity-50">Balance</h3>
@@ -146,20 +154,21 @@ export default async function Page(): Promise<JSX.Element> {
           <div className="flex gap-2">
             <h3 className="text-md opacity-50">Unrealized PnL</h3>
             <span className={getTextColor(unrealized)}>{unrealized.toFixed(2)}</span>
-            <span className={cn('opacity-50', getTextColor(unrealized))}>
+            <span className={cn('opacity-50', getTextColor(unrealized_percent))}>
               ({unrealized_percent.toFixed(2)}%)
             </span>
           </div>
           <div className="flex gap-2">
             <h3 className="text-md opacity-50">Daily Realized PnL</h3>
             <span className={getTextColor(realized)}>{realized.toFixed(2)}</span>
-            <span className={cn('opacity-50', getTextColor(unrealized))}>
+            <span className={cn('opacity-50', getTextColor(realized_percent))}>
               ({realized_percent.toFixed(2)}%)
             </span>
           </div>
           <div className="flex gap-2">
             <h3 className="text-md opacity-50">Fee</h3>
             <span className="opacity-50">{fee.toFixed(2)}</span>
+            <span className="opacity-50">({fee_percent.toFixed(2)}%)</span>
           </div>
         </div>
         {positionResponse.data.positions.map((position) => {
@@ -221,14 +230,14 @@ export default async function Page(): Promise<JSX.Element> {
                     >
                       {order.position_side}
                     </div>
-                    {order.quantity}
+                    {order.quantity.toFixed(2)}
                   </td>
                   <td
                     className={cn(
                       (order.realized_pnl || 0) > 0 ? 'text-green-500' : 'text-red-500',
                     )}
                   >
-                    {order.realized_pnl}
+                    {order.realized_pnl?.toFixed(2)}
                   </td>
                   <td>{timeAgo.format(new Date(order.updated_time * 1000)).replace(' ago', '')}</td>
                 </tr>
