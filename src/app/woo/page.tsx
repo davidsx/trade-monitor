@@ -1,7 +1,6 @@
-import { CHALLENGE_CONFIG, CHALLENGE_START_DAY } from '@/config';
+import { CHALLENGE_CONFIG } from '@/config';
 import WooService from '@/service/woo';
 import { cn } from '@/styles';
-import { differenceInDays } from 'date-fns';
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
 import Link from 'next/link';
@@ -126,23 +125,26 @@ export default async function Page(): Promise<JSX.Element> {
     { unrealized: 0, realized: 0, fee: 0 },
   );
 
-  const balance = accountInfo.data.totalAccountValue - unrealized - realized;
-  const unrealized_percent = (unrealized / (balance - realized)) * 100;
-  const realized_percent = (realized / (balance - realized)) * 100;
-  const fee_percent = (fee / (balance - realized)) * 100;
+  const equity = accountInfo.data.totalAccountValue;
+  const balance = equity - unrealized - realized + fee;
 
+  const unrealized_percent = (unrealized / balance) * 100;
+  const realized_percent = (realized / balance) * 100;
+
+  const pnl = unrealized + realized - fee;
+  const pnl_percent = (pnl / balance) * 100;
+  const fee_percent = (fee / balance) * 100;
+
+  const daily_profit_target = CHALLENGE_CONFIG.getProfileRequired();
+  const daily_profit_target_percent = CHALLENGE_CONFIG.dailyProfitPercentage * 100;
+  const daily_target = CHALLENGE_CONFIG.getBalanceRequired();
   const challengeText = [
-    `${(CHALLENGE_CONFIG.dailyProfitPercentage * 100).toFixed(2)}%`,
-    `${CHALLENGE_CONFIG.getProfileRequired(
-      differenceInDays(new Date(), CHALLENGE_START_DAY) + 1,
-    ).toFixed(2)}`,
-    `${CHALLENGE_CONFIG.getBalanceRequired(
-      differenceInDays(new Date(), CHALLENGE_START_DAY) + 1,
-    ).toFixed(2)}`,
+    `${daily_profit_target_percent.toFixed(2)}%`,
+    `${daily_profit_target.toFixed(2)}`,
   ];
 
-  const getTextColor = (value: number) =>
-    cn('text-gray-500', value > 0 && 'text-green-500', value < 0 && 'text-red-500');
+  const getTextColor = (value: number, base: number = 0) =>
+    cn('text-gray-500', value > base && 'text-green-500', value < base && 'text-red-500');
 
   return (
     <div className="flex min-h-screen flex-col gap-4 bg-[#171717] p-4 text-[#C6C7C8]">
@@ -156,16 +158,32 @@ export default async function Page(): Promise<JSX.Element> {
       </div>
       <section className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl">
-            Portfolio
-            <span className="opacity-50"> ({accountInfo.data.totalAccountValue.toFixed(2)})</span>
-          </h2>
+          <h2 className="text-2xl">Portfolio</h2>
           <div className="font-semibold">{challengeText.join(' / ')}</div>
         </div>
         <div className="text-sm">
-          <div className="flex gap-2">
-            <h3 className="text-md opacity-50">Balance</h3>
-            <span>{balance.toFixed(2)}</span>
+          <div className="flex justify-between">
+            <div className="flex gap-2">
+              <h3 className="text-md opacity-50">Balance</h3>
+              <span>{balance.toFixed(2)}</span>
+            </div>
+            <div className="flex gap-2">
+              <h3 className="text-md opacity-50">Daily Target</h3>
+              <span>{daily_target.toFixed(2)}</span>
+            </div>
+          </div>
+          <div className="flex justify-between">
+            <div className="flex gap-2">
+              <h3 className="text-md opacity-50">Total PnL</h3>
+              <span className={getTextColor(pnl)}>{pnl.toFixed(2)}</span>
+              <span className={cn('opacity-50', getTextColor(pnl_percent))}>
+                ({pnl_percent.toFixed(2)}%)
+              </span>
+            </div>
+            <div className="flex gap-2">
+              <h3 className="text-md opacity-50">Current Equity</h3>
+              <span className={cn(getTextColor(equity, daily_target))}>{equity.toFixed(2)}</span>
+            </div>
           </div>
           <div className="flex gap-2">
             <h3 className="text-md opacity-50">Unrealized PnL</h3>
@@ -183,7 +201,7 @@ export default async function Page(): Promise<JSX.Element> {
           </div>
           <div className="flex gap-2">
             <h3 className="text-md opacity-50">Fee</h3>
-            <span className="opacity-50">{fee.toFixed(2)}</span>
+            <span className="opacity-50">-{fee.toFixed(2)}</span>
             <span className="opacity-50">({fee_percent.toFixed(2)}%)</span>
           </div>
         </div>
@@ -212,8 +230,10 @@ export default async function Page(): Promise<JSX.Element> {
                 </div>
               </div>
               <div className="flex justify-between text-sm opacity-40">
-                <div className="text-gray-500">fee: {fee24H.toFixed(2)}</div>
-                <div className={cn(getTextColor(pnl24H))}>PnL: {pnl24H.toFixed(2)}</div>
+                <div>Fee: {fee24H.toFixed(2)}</div>
+                <div className={cn(getTextColor(pnl24H))}>
+                  PnL: {pnl24H.toFixed(2)} ({(pnl24H - fee24H).toFixed(2)})
+                </div>
               </div>
             </div>
           );
