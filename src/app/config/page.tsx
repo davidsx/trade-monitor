@@ -32,7 +32,7 @@ export default function Page(): JSX.Element {
           </div>
           <div className="flex gap-2">
             <h3 className="text-md opacity-50">Daily Profit Percentage</h3>
-            <span>{CHALLENGE_CONFIG.dailyProfitPercentage}</span>
+            <span>{(CHALLENGE_CONFIG.dailyProfitPercentage * 100).toFixed(2)}%</span>
           </div>
         </div>
       </section>

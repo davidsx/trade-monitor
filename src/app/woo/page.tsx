@@ -1,6 +1,7 @@
-import { CHALLENGE_CONFIG } from '@/config';
+import { CHALLENGE_CONFIG, CHALLENGE_START_DAY } from '@/config';
 import WooService from '@/service/woo';
 import { cn } from '@/styles';
+import { differenceInDays } from 'date-fns';
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
 import Link from 'next/link';
@@ -130,21 +131,36 @@ export default async function Page(): Promise<JSX.Element> {
   const realized_percent = (realized / (balance - realized)) * 100;
   const fee_percent = (fee / (balance - realized)) * 100;
 
+  const challengeText = [
+    `${(CHALLENGE_CONFIG.dailyProfitPercentage * 100).toFixed(2)}%`,
+    `${CHALLENGE_CONFIG.getProfileRequired(
+      differenceInDays(new Date(), CHALLENGE_START_DAY) + 1,
+    ).toFixed(2)}`,
+    `${CHALLENGE_CONFIG.getBalanceRequired(
+      differenceInDays(new Date(), CHALLENGE_START_DAY) + 1,
+    ).toFixed(2)}`,
+  ];
+
   const getTextColor = (value: number) =>
     cn('text-gray-500', value > 0 && 'text-green-500', value < 0 && 'text-red-500');
 
   return (
     <div className="flex min-h-screen flex-col gap-4 bg-[#171717] p-4 text-[#C6C7C8]">
-      <h1 className="text-4xl">WOO X</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-4xl">WOO X</h1>
+        <nav className="flex flex-col gap-1">
+          <Link className="underline underline-offset-2" href="/config">
+            Config
+          </Link>
+        </nav>
+      </div>
       <section className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl">
             Portfolio
             <span className="opacity-50"> ({accountInfo.data.totalAccountValue.toFixed(2)})</span>
           </h2>
-          <Link className="underline underline-offset-2 font-semibold" href="/config">
-            {(CHALLENGE_CONFIG.dailyProfitPercentage * 100).toFixed(2)}%
-          </Link>
+          <div className="font-semibold">{challengeText.join(' / ')}</div>
         </div>
         <div className="text-sm">
           <div className="flex gap-2">
@@ -159,7 +175,7 @@ export default async function Page(): Promise<JSX.Element> {
             </span>
           </div>
           <div className="flex gap-2">
-            <h3 className="text-md opacity-50">Daily Realized PnL</h3>
+            <h3 className="text-md opacity-50">Realized PnL</h3>
             <span className={getTextColor(realized)}>{realized.toFixed(2)}</span>
             <span className={cn('opacity-50', getTextColor(realized_percent))}>
               ({realized_percent.toFixed(2)}%)
