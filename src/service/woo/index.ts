@@ -1,8 +1,10 @@
 import { HmacSHA256 } from 'crypto-js';
 import {
   BasicResponse,
+  PageMeta,
   PageResponse,
   WOOAccountInfo,
+  WOOAlgoOrder,
   WOOOrder,
   WOOPosition,
   WOOTradeHistory,
@@ -74,12 +76,22 @@ export default class WooService {
     return data;
   }
 
-  async getOrders() {
+  async getPreviousOrders() {
     // const today = (startOfDay(new Date()).getTime() / 1000).toFixed(3);
     // const tmr = (addDays(startOfDay(new Date()), 1).getTime() / 1000).toFixed(3);
     // console.log(today, tmr);
     const data = await this.get<PageResponse<WOOOrder>>(
       `/v1/orders?realized_pnl=true&size=200&status=FILLED`,
+    );
+    return data;
+  }
+
+  async getOpeningOrders() {
+    // const today = (startOfDay(new Date()).getTime() / 1000).toFixed(3);
+    // const tmr = (addDays(startOfDay(new Date()), 1).getTime() / 1000).toFixed(3);
+    // console.log(today, tmr);
+    const data = await this.get<BasicResponse<{ rows: WOOAlgoOrder[]; meta: PageMeta }>>(
+      `/v3/algo/orders?realized_pnl=true&size=50&status=INCOMPLETE`,
     );
     return data;
   }

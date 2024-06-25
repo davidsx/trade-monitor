@@ -11,109 +11,15 @@ const timeAgo = new TimeAgo('en-US');
 
 export const revalidate = 30;
 
-// type TradeSummary = Record<string, { fee: number; pnl: number; count: number }>;
 export default async function Page(): Promise<JSX.Element> {
   const accountInfo = await wooService.getAccountInfo();
-  const orderResponse = await wooService.getOrders();
+  const orderResponse = await wooService.getPreviousOrders();
+  const openingOrderResponse = await wooService.getOpeningOrders();
   const positionResponse = await wooService.getPositions();
 
+  // console.log(openingOrderResponse.data.rows);
+
   const challenge = await getChallenge();
-
-  // const trades = orderResponse.rows
-  //   .filter((order) =>
-  //     isAfter(new Date(order.updated_time * 1000), addDays(startOfDay(new Date()), -1)),
-  //   )
-  //   .reduce<TradeSummary>(
-  //     (acc, order) => ({
-  //       ...acc,
-  //       [order.symbol]: {
-  //         fee: acc[order.symbol]?.fee || 0 + order.total_fee,
-  //         pnl: acc[order.symbol]?.pnl || 0 + (order.realized_pnl || 0),
-  //         count: acc[order.symbol]?.count || 0 + (order.realized_pnl !== null ? 1 : 0),
-  //       },
-  //     }),
-  //     {} as TradeSummary,
-  //   )
-
-  // console.log(
-  //   orderResponse.rows
-  //     .filter((order) => order.realized_pnl !== null)
-  //     .map((order) => `${order.status} ${order.realized_pnl}`),
-  //   orderResponse.rows
-  //     .filter((order) => order.realized_pnl !== null)
-  //     .map((order) => `${order.status} ${order.realized_pnl}`).length
-  // );
-  // const { trades, mismatch_orders } = orderResponse.rows.reduce<{
-  //   trades: ParsedTrade[];
-  //   mismatch_orders: WOOOrder[];
-  // }>(
-  //   (acc, order) => {
-  //     const { trades, mismatch_orders } = acc;
-  //     if (order.status !== "FILLED") return acc;
-
-  //     // Trade open
-  //     let open_order: WOOOrder | undefined;
-  //     let close_order: WOOOrder | undefined;
-  //     const match_order = mismatch_orders.find(
-  //       (o) =>
-  //         o.position_side === order.position_side &&
-  //         o.symbol === order.symbol &&
-  //         o.quantity === order.quantity &&
-  //         o.side !== order.side
-  //     );
-  //     if (match_order) {
-  //       // Open order
-  //       if (
-  //         (order.position_side === "LONG" && order.side === "BUY") ||
-  //         (order.position_side === "SHORT" && order.side === "SELL")
-  //       ) {
-  //         close_order = match_order;
-  //         open_order = order;
-  //       }
-  //       // Close order
-  //       if (
-  //         (order.position_side === "LONG" && order.side === "SELL") ||
-  //         (order.position_side === "SHORT" && order.side === "BUY")
-  //       ) {
-  //         open_order = match_order;
-  //         close_order = order;
-  //       }
-  //     }
-
-  //     if (open_order && close_order) {
-  //       const price_diff =
-  //         close_order.average_executed_price -
-  //         open_order.average_executed_price;
-  //       const filter_order_ids = [open_order.order_id, close_order.order_id];
-  //       const realized_pnl =
-  //         (open_order.position_side === "LONG" ? 1 : -1) *
-  //         price_diff *
-  //         open_order.quantity;
-  //       console.log(
-  //         realized_pnl.toFixed(3),
-  //         close_order.realized_pnl?.toFixed(3),
-  //         realized_pnl.toFixed(3) === close_order.realized_pnl?.toFixed(3)
-  //       );
-  //       const trade: ParsedTrade = {
-  //         symbol: open_order.symbol,
-  //         position_side: open_order.position_side,
-  //         quantity: open_order.quantity,
-  //         hold_time: close_order.updated_time - open_order.updated_time,
-  //         realized_pnl,
-  //         entry_price: open_order.average_executed_price,
-  //         exit_price: close_order.average_executed_price,
-  //       };
-  //       return {
-  //         trades: [...trades, trade],
-  //         mismatch_orders: mismatch_orders.filter(
-  //           (o) => !filter_order_ids.includes(o.order_id)
-  //         ),
-  //       };
-  //     }
-  //     return { trades, mismatch_orders: [...mismatch_orders, order] };
-  //   },
-  //   { trades: [], mismatch_orders: [] }
-  // );
 
   const { unrealized, realized, fee } = positionResponse.data.positions.reduce(
     ({ unrealized, realized, fee }, { averageOpenPrice, markPrice, holding, fee24H, pnl24H }) => {
@@ -164,7 +70,7 @@ export default async function Page(): Promise<JSX.Element> {
           <div className="font-semibold">{challengeText.join(' / ')}</div>
         </div>
         <div className="flex justify-between text-sm">
-          <div className="flex-1 h-full">
+          <div className="h-full flex-1">
             <div className="flex gap-2">
               <h3 className="text-md opacity-50">Balance</h3>
               <span>{balance.toFixed(2)}</span>
@@ -196,7 +102,7 @@ export default async function Page(): Promise<JSX.Element> {
               <span className="opacity-50">({fee_percent.toFixed(2)}%)</span>
             </div>
           </div>
-          <div className="flex-1 h-full flex flex-col items-end">
+          <div className="flex h-full flex-1 flex-col items-end">
             <div className="flex gap-2">
               <h3 className="text-md opacity-50">Daily Target</h3>
               <span>{daily_target.toFixed(2)}</span>
@@ -214,22 +120,31 @@ export default async function Page(): Promise<JSX.Element> {
           const { symbol, fee24H, pnl24H, positionSide, averageOpenPrice, markPrice, holding } =
             position;
           const unrealized_pnl = (markPrice - averageOpenPrice) * holding;
+          const algoOrders =
+            openingOrderResponse.data.rows.find(
+              (algoOrder) =>
+                position.symbol === algoOrder.symbol &&
+                position.positionSide === algoOrder.positionSide &&
+                algoOrder.algoType === 'POSITIONAL_TP_SL',
+            )?.childOrders || [];
+          const tpOrder = algoOrders.find((algoOrder) => algoOrder.algoType === 'TAKE_PROFIT');
+          const tpPrice = tpOrder?.triggerPrice;
+          const slOrder = algoOrders.find((algoOrder) => algoOrder.algoType === 'STOP_LOSS');
+          const slPrice = slOrder?.triggerPrice;
+          const riskRatio =
+            Math.abs((tpPrice || averageOpenPrice) - averageOpenPrice) /
+            Math.abs((slPrice || averageOpenPrice) - averageOpenPrice);
           return (
             <div
               className={cn(
-                'relative flex flex-col rounded-xl bg-[#262728] px-6 py-2',
+                'relative flex flex-col gap-1 rounded-xl bg-[#262728] px-6 py-2',
                 "after:absolute after:left-0 after:top-0 after:h-full after:w-2 after:rounded-bl-xl after:rounded-tl-xl after:content-['']",
                 positionSide === 'LONG' ? 'after:bg-green-500' : 'after:bg-red-500',
               )}
               key={`${symbol}-${positionSide}`}
             >
               <div className="flex justify-between">
-                <div>
-                  {symbol.replace('PERP_', '').replace('_USDT', '')}-PERP{' '}
-                  {averageOpenPrice > 0 && (
-                    <span className="text-xs">{averageOpenPrice.toFixed(2)}</span>
-                  )}
-                </div>
+                <div>{symbol.replace('PERP_', '').replace('_USDT', '')}-PERP</div>
                 <div className={cn('font-medium', getTextColor(unrealized_pnl))}>
                   {unrealized_pnl.toFixed(2)}
                 </div>
@@ -240,6 +155,30 @@ export default async function Page(): Promise<JSX.Element> {
                   PnL: {pnl24H.toFixed(2)} ({(pnl24H - fee24H).toFixed(2)})
                 </div>
               </div>
+              {averageOpenPrice > 0 && (
+                <div className="flex gap-2">
+                  <span className="text-xs">Entry: {averageOpenPrice.toFixed(2)}</span>
+                  {tpPrice && <span className="text-xs">TP: {tpPrice.toFixed(2)}</span>}
+                  {slPrice && <span className="text-xs">SL: {slPrice.toFixed(2)}</span>}
+                </div>
+              )}
+              {averageOpenPrice > 0 && (
+                <div className="flex gap-2">
+                  {tpPrice && (
+                    <span className="text-xs">
+                      Profit: {(Math.abs(tpPrice - averageOpenPrice) * holding).toFixed(2)}
+                    </span>
+                  )}
+                  {slPrice && (
+                    <span className="text-xs">
+                      Loss: -{(Math.abs(slPrice - averageOpenPrice) * holding).toFixed(2)}
+                    </span>
+                  )}
+                  {riskRatio > 0 && (
+                    <span className="text-xs">RR: 1 to {riskRatio.toFixed(1)}</span>
+                  )}
+                </div>
+              )}
             </div>
           );
         })}
