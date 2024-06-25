@@ -1,0 +1,21 @@
+{
+    "name": "Trade Monitor",
+    "short_name": "Trade monitor",
+    "theme_color": "#171717",
+    "background_color": "#171717",
+    "display": "standalone",
+    "orientation": "portrait",
+    "scope": "/",
+    "start_url": "/",
+    "icons": [
+        {
+            "src": "/icons/icon-192x192.png",
+            "sizes": "192x192"
+        },
+        {
+            "src": "/icons/icon-512x512.png",
+            "sizes": "512x512"
+        }
+    ],
+    "splash_pages": null
+  }
