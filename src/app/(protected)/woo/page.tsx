@@ -147,7 +147,7 @@ export default async function Page(): Promise<JSX.Element> {
     cn('text-gray-500', value > base && 'text-green-500', value < base && 'text-red-500');
 
   return (
-    <div className="flex min-h-screen flex-col gap-4 bg-[#171717] p-4 text-[#C6C7C8]">
+    <div className="flex min-h-screen flex-col gap-4">
       <div className="flex items-center justify-between">
         <h1 className="text-4xl">WOO X</h1>
         <nav className="flex flex-col gap-1">
@@ -161,18 +161,12 @@ export default async function Page(): Promise<JSX.Element> {
           <h2 className="text-2xl">Portfolio</h2>
           <div className="font-semibold">{challengeText.join(' / ')}</div>
         </div>
-        <div className="text-sm">
-          <div className="flex justify-between">
+        <div className="flex justify-between text-sm">
+          <div className="flex-1 h-full">
             <div className="flex gap-2">
               <h3 className="text-md opacity-50">Balance</h3>
               <span>{balance.toFixed(2)}</span>
             </div>
-            <div className="flex gap-2">
-              <h3 className="text-md opacity-50">Daily Target</h3>
-              <span>{daily_target.toFixed(2)}</span>
-            </div>
-          </div>
-          <div className="flex justify-between">
             <div className="flex gap-2">
               <h3 className="text-md opacity-50">Total PnL</h3>
               <span className={getTextColor(pnl)}>{pnl.toFixed(2)}</span>
@@ -181,28 +175,37 @@ export default async function Page(): Promise<JSX.Element> {
               </span>
             </div>
             <div className="flex gap-2">
+              <h3 className="text-md opacity-50">Unrealized PnL</h3>
+              <span className={getTextColor(unrealized)}>{unrealized.toFixed(2)}</span>
+              <span className={cn('opacity-50', getTextColor(unrealized_percent))}>
+                ({unrealized_percent.toFixed(2)}%)
+              </span>
+            </div>
+            <div className="flex gap-2">
+              <h3 className="text-md opacity-50">Realized PnL</h3>
+              <span className={getTextColor(realized)}>{realized.toFixed(2)}</span>
+              <span className={cn('opacity-50', getTextColor(realized_percent))}>
+                ({realized_percent.toFixed(2)}%)
+              </span>
+            </div>
+            <div className="flex gap-2">
+              <h3 className="text-md opacity-50">Fee</h3>
+              <span className="opacity-50">-{fee.toFixed(2)}</span>
+              <span className="opacity-50">({fee_percent.toFixed(2)}%)</span>
+            </div>
+          </div>
+          <div className="flex-1 h-full flex flex-col items-end">
+            <div className="flex gap-2">
+              <h3 className="text-md opacity-50">Daily Target</h3>
+              <span>{daily_target.toFixed(2)}</span>
+            </div>
+            <div className="flex gap-2">
               <h3 className="text-md opacity-50">Current Equity</h3>
               <span className={cn(getTextColor(equity, daily_target))}>{equity.toFixed(2)}</span>
             </div>
-          </div>
-          <div className="flex gap-2">
-            <h3 className="text-md opacity-50">Unrealized PnL</h3>
-            <span className={getTextColor(unrealized)}>{unrealized.toFixed(2)}</span>
-            <span className={cn('opacity-50', getTextColor(unrealized_percent))}>
-              ({unrealized_percent.toFixed(2)}%)
-            </span>
-          </div>
-          <div className="flex gap-2">
-            <h3 className="text-md opacity-50">Realized PnL</h3>
-            <span className={getTextColor(realized)}>{realized.toFixed(2)}</span>
-            <span className={cn('opacity-50', getTextColor(realized_percent))}>
-              ({realized_percent.toFixed(2)}%)
-            </span>
-          </div>
-          <div className="flex gap-2">
-            <h3 className="text-md opacity-50">Fee</h3>
-            <span className="opacity-50">-{fee.toFixed(2)}</span>
-            <span className="opacity-50">({fee_percent.toFixed(2)}%)</span>
+            <Link href="/woo">
+              <button className="mt-auto underline">refresh</button>
+            </Link>
           </div>
         </div>
         {positionResponse.data.positions.map((position) => {
