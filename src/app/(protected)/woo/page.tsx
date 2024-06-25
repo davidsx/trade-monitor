@@ -70,7 +70,7 @@ export default async function Page(): Promise<JSX.Element> {
           <div className="font-semibold">{challengeText.join(' / ')}</div>
         </div>
         <div className="flex justify-between text-sm">
-          <div className="h-full flex-1">
+          <div className="h-full">
             <div className="flex gap-2">
               <h3 className="text-md opacity-50">Balance</h3>
               <span>{balance.toFixed(2)}</span>
@@ -83,14 +83,14 @@ export default async function Page(): Promise<JSX.Element> {
               </span>
             </div>
             <div className="flex gap-2">
-              <h3 className="text-md opacity-50">Unreal. PnL</h3>
+              <h3 className="text-md opacity-50">Unrealized</h3>
               <span className={getTextColor(unrealized)}>{unrealized.toFixed(2)}</span>
               <span className={cn('opacity-50', getTextColor(unrealized_percent))}>
                 ({unrealized_percent.toFixed(2)}%)
               </span>
             </div>
             <div className="flex gap-2">
-              <h3 className="text-md opacity-50">Real. PnL</h3>
+              <h3 className="text-md opacity-50">Realized</h3>
               <span className={getTextColor(realized)}>{realized.toFixed(2)}</span>
               <span className={cn('opacity-50', getTextColor(realized_percent))}>
                 ({realized_percent.toFixed(2)}%)
@@ -102,7 +102,7 @@ export default async function Page(): Promise<JSX.Element> {
               <span className="opacity-50">({fee_percent.toFixed(2)}%)</span>
             </div>
           </div>
-          <div className="flex h-full flex-1 flex-col items-end">
+          <div className="flex h-full flex-col items-end">
             <div className="flex gap-2">
               <h3 className="text-md opacity-50">Daily Target</h3>
               <span>{daily_target.toFixed(2)}</span>
