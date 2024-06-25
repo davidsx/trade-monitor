@@ -177,14 +177,14 @@ export default async function Page(): Promise<JSX.Element> {
               </span>
             </div>
             <div className="flex gap-2">
-              <h3 className="text-md opacity-50">Unrealized PnL</h3>
+              <h3 className="text-md opacity-50">Unreal. PnL</h3>
               <span className={getTextColor(unrealized)}>{unrealized.toFixed(2)}</span>
               <span className={cn('opacity-50', getTextColor(unrealized_percent))}>
                 ({unrealized_percent.toFixed(2)}%)
               </span>
             </div>
             <div className="flex gap-2">
-              <h3 className="text-md opacity-50">Realized PnL</h3>
+              <h3 className="text-md opacity-50">Real. PnL</h3>
               <span className={getTextColor(realized)}>{realized.toFixed(2)}</span>
               <span className={cn('opacity-50', getTextColor(realized_percent))}>
                 ({realized_percent.toFixed(2)}%)
