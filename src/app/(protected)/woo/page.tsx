@@ -1,4 +1,4 @@
-import { CHALLENGE_CONFIG } from '@/config';
+import { getChallenge } from '@/config';
 import WooService from '@/service/woo';
 import { cn } from '@/styles';
 import TimeAgo from 'javascript-time-ago';
@@ -16,6 +16,8 @@ export default async function Page(): Promise<JSX.Element> {
   const accountInfo = await wooService.getAccountInfo();
   const orderResponse = await wooService.getOrders();
   const positionResponse = await wooService.getPositions();
+
+  const challenge = await getChallenge();
 
   // const trades = orderResponse.rows
   //   .filter((order) =>
@@ -135,9 +137,9 @@ export default async function Page(): Promise<JSX.Element> {
   const pnl_percent = (pnl / balance) * 100;
   const fee_percent = (fee / balance) * 100;
 
-  const daily_profit_target = CHALLENGE_CONFIG.getProfileRequired();
-  const daily_profit_target_percent = CHALLENGE_CONFIG.dailyProfitPercentage * 100;
-  const daily_target = CHALLENGE_CONFIG.getBalanceRequired();
+  const daily_profit_target = challenge.getProfileRequired();
+  const daily_profit_target_percent = challenge.dailyProfitPercentage * 100;
+  const daily_target = challenge.getBalanceRequired();
   const challengeText = [
     `${daily_profit_target_percent.toFixed(2)}%`,
     `${daily_profit_target.toFixed(2)}`,
