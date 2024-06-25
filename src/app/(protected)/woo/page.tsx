@@ -166,12 +166,12 @@ export default async function Page(): Promise<JSX.Element> {
                 <div className="flex gap-2">
                   {tpPrice && (
                     <span className="text-xs">
-                      Profit: {(Math.abs(tpPrice - averageOpenPrice) * holding).toFixed(2)}
+                      Profit: {Math.abs((tpPrice - averageOpenPrice) * holding).toFixed(2)}
                     </span>
                   )}
                   {slPrice && (
                     <span className="text-xs">
-                      Loss: -{(Math.abs(slPrice - averageOpenPrice) * holding).toFixed(2)}
+                      Loss: -{Math.abs((slPrice - averageOpenPrice) * holding).toFixed(2)}
                     </span>
                   )}
                   {riskRatio > 0 && (
