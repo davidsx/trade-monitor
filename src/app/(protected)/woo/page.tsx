@@ -144,7 +144,10 @@ export default async function Page(): Promise<JSX.Element> {
               key={`${symbol}-${positionSide}`}
             >
               <div className="flex justify-between">
-                <div>{symbol.replace('PERP_', '').replace('_USDT', '')}-PERP</div>
+                <div>
+                  {symbol.replace('PERP_', '').replace('_USDT', '')}-PERP&nbsp;
+                  <span className="text-xs">at {markPrice.toFixed(2)}</span>
+                </div>
                 <div className={cn('font-medium', getTextColor(unrealized_pnl))}>
                   {unrealized_pnl.toFixed(2)}
                 </div>
