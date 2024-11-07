@@ -9,7 +9,7 @@ import {
   WOOPosition,
   WOOTradeHistory,
 } from './types';
-import { addDays, startOfDay } from 'date-fns';
+// import { addDays, startOfDay } from 'date-fns';
 
 export const API_DOMAIN = 'https://api.woo.org/';
 export const API_SECRET = process.env.WOO_API_SECRET;
@@ -76,13 +76,15 @@ export default class WooService {
     return data;
   }
 
-  async getPreviousOrders() {
+  async getPreviousOrders(startDate?: number, endDate?: number) {
     // const today = (startOfDay(new Date()).getTime() / 1000).toFixed(3);
     // const tmr = (addDays(startOfDay(new Date()), 1).getTime() / 1000).toFixed(3);
     // console.log(today, tmr);
-    const data = await this.get<PageResponse<WOOOrder>>(
-      `/v1/orders?realized_pnl=true&size=200&status=FILLED`,
-    );
+    let url = `/v1/orders?realized_pnl=true&size=200&status=FILLED`;
+    if (startDate && endDate) {
+      url += `&start_t=${(startDate / 1000).toFixed(3)}&end_t=${(endDate / 1000).toFixed(3)}`;
+    }
+    const data = await this.get<PageResponse<WOOOrder>>(url);
     return data;
   }
 
