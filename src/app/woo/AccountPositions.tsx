@@ -41,6 +41,10 @@ export default function AccountPositions() {
             <span>{balance.toFixed(2)}</span>
           </div>
           <div className="flex gap-2">
+            <h3 className="text-md opacity-50">Equity</h3>
+            <span>{(balance + pnl).toFixed(2)}</span>
+          </div>
+          <div className="flex gap-2">
             <h3 className="text-md opacity-50">Total PnL</h3>
             <span className={getTextColor(pnl)}>{pnl.toFixed(2)}</span>
             <span className={cn('opacity-50', getTextColor(pnl_percent))}>
@@ -49,14 +53,18 @@ export default function AccountPositions() {
           </div>
           <div className="flex gap-2">
             <h3 className="text-md opacity-50">Unrealized</h3>
-            <span className={getTextColor(unrealized)}>{unrealized.toFixed(2)}</span>
+            <span className={cn(getTextColor(unrealized), 'opacity-60')}>
+              {unrealized.toFixed(2)}
+            </span>
             <span className={cn('opacity-50', getTextColor(unrealized_percent))}>
               ({unrealized_percent.toFixed(2)}%)
             </span>
           </div>
           <div className="flex gap-2">
             <h3 className="text-md opacity-50">Realized</h3>
-            <span className={getTextColor(realized)}>{realized.toFixed(2)}</span>
+            <span className={cn(getTextColor(unrealized), 'opacity-60')}>
+              {realized.toFixed(2)}
+            </span>
             <span className={cn('opacity-50', getTextColor(realized_percent))}>
               ({realized_percent.toFixed(2)}%)
             </span>
