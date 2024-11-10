@@ -1,8 +1,8 @@
 'use client';
 
 import { ParsedTrade } from '@/types';
-import { format } from 'date-fns';
-import React, { useRef } from 'react';
+import { format, startOfDay } from 'date-fns';
+import React from 'react';
 import { compareDateOnly, formatTimeAgo } from '@/utils';
 import { cn } from '@/styles';
 
@@ -19,9 +19,12 @@ export default function ListView({ trades }: Props): JSX.Element {
   return (
     <div className="relative flex h-full w-full flex-col gap-4 overflow-auto">
       {sortedTrades.map((trade, i, arr) => {
+        const lastTrade = arr[i - 1];
+        const isTradeFromNewDay =
+          Boolean(lastTrade) && trade.timestamp < startOfDay(lastTrade.timestamp).getTime();
         return (
           <React.Fragment key={trade.id}>
-            {(i === 0 || !compareDateOnly(trade.timestamp, new Date(arr[i - 1].timestamp))) && (
+            {(i === 0 || isTradeFromNewDay) && (
               <div className="text-dark text-xl" suppressHydrationWarning>
                 {compareDateOnly(trade.timestamp, today)
                   ? 'Today'
@@ -41,6 +44,7 @@ export default function ListView({ trades }: Props): JSX.Element {
                     {trade.position_side}
                   </div>
                   {trade.symbol.replace('PERP_', '').replace('_USDT', '')}
+                  {i}
                 </div>
                 <div>{trade.quantity.toFixed(2)}</div>
               </div>

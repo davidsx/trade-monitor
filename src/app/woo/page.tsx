@@ -1,5 +1,5 @@
 import { cn } from '@/styles';
-import AccountPositions from './AccountPositions';
+import AccountAndPositions from './AccountAndPositions';
 import TradeHistory from './TradeHistory';
 
 export const revalidate = 30;
@@ -26,7 +26,7 @@ export default async function Page(): Promise<JSX.Element> {
           </Link>
         </nav> */}
       </div>
-      <AccountPositions />
+      <AccountAndPositions />
       <TradeHistory />
     </div>
   );

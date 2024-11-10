@@ -4,7 +4,7 @@ import { cn } from '@/styles';
 import { PositionDetail } from '@/types';
 import useSWR from 'swr';
 
-export default function AccountPositions() {
+export default function AccountAndPositions() {
   const { data: positionDetail } = useSWR(
     '/api/woo/positions',
     (url) => fetch(url).then((res) => res.json() as Promise<PositionDetail>),
@@ -14,10 +14,12 @@ export default function AccountPositions() {
   if (!positionDetail) return null;
 
   const {
+    startingBalance,
+    equity,
+    balance,
     unrealized,
     realized,
     fee,
-    balance,
     unrealized_percent,
     realized_percent,
     pnl,
@@ -37,12 +39,16 @@ export default function AccountPositions() {
       <div className="flex justify-between text-sm">
         <div className="h-full">
           <div className="flex gap-2">
-            <h3 className="text-md opacity-50">Balance</h3>
+            <h3 className="text-md opacity-50">Starting Balance</h3>
+            <span>{startingBalance.toFixed(2)}</span>
+          </div>
+          <div className="flex gap-2">
+            <h3 className="text-md opacity-50">Current Balance</h3>
             <span>{balance.toFixed(2)}</span>
           </div>
           <div className="flex gap-2">
             <h3 className="text-md opacity-50">Equity</h3>
-            <span>{(balance + pnl).toFixed(2)}</span>
+            <span>{equity.toFixed(2)}</span>
           </div>
           <div className="flex gap-2">
             <h3 className="text-md opacity-50">Total PnL</h3>
@@ -89,71 +95,77 @@ export default function AccountPositions() {
           </Link>
         </div> */}
       </div>
-      {positionDetail.positions.map((position) => {
-        const {
-          symbol,
-          position_side,
-          quantity,
-          entry_price,
-          mark_price,
-          tp_price,
-          sl_price,
-          unrealized_pnl,
-          fee,
-          pnl,
-          risk_ratio,
-        } = position;
-        return (
-          <div
-            className={cn(
-              'relative flex flex-col gap-1 rounded-xl bg-[#262728] px-6 py-2',
-              "after:absolute after:left-0 after:top-0 after:h-full after:w-2 after:rounded-bl-xl after:rounded-tl-xl after:content-['']",
-              position_side === 'LONG' ? 'after:bg-green-500' : 'after:bg-red-500',
-            )}
-            key={`${symbol}-${position_side}`}
-          >
-            <div className="flex justify-between">
-              <div>
-                {symbol.replace('PERP_', '').replace('_USDT', '')}-PERP&nbsp;
-                <span className="text-xs">at {mark_price.toFixed(2)}</span>
+      {positionDetail.positions
+        .sort((a, b) =>
+          a.unrealized_pnl && a.unrealized_pnl
+            ? b.unrealized_pnl - a.unrealized_pnl
+            : b.pnl - a.pnl,
+        )
+        .map((position) => {
+          const {
+            symbol,
+            position_side,
+            quantity,
+            entry_price,
+            mark_price,
+            tp_price,
+            sl_price,
+            unrealized_pnl,
+            fee,
+            pnl,
+            risk_ratio,
+          } = position;
+          return (
+            <div
+              className={cn(
+                'relative flex flex-col gap-1 rounded-xl bg-[#262728] px-6 py-2',
+                "after:absolute after:left-0 after:top-0 after:h-full after:w-2 after:rounded-bl-xl after:rounded-tl-xl after:content-['']",
+                position_side === 'LONG' ? 'after:bg-green-500' : 'after:bg-red-500',
+              )}
+              key={`${symbol}-${position_side}`}
+            >
+              <div className="flex justify-between">
+                <div>
+                  {symbol.replace('PERP_', '').replace('_USDT', '')}-PERP&nbsp;
+                  <span className="text-xs">at {mark_price.toFixed(2)}</span>
+                </div>
+                <div className={cn('font-medium', getTextColor(unrealized_pnl))}>
+                  {unrealized_pnl.toFixed(2)}
+                </div>
               </div>
-              <div className={cn('font-medium', getTextColor(unrealized_pnl))}>
-                {unrealized_pnl.toFixed(2)}
+              <div className="flex justify-between text-sm opacity-40">
+                <div>Fee: {fee.toFixed(2)}</div>
+                <div className={cn(getTextColor(pnl))}>
+                  PnL: {pnl.toFixed(2)} ({(pnl - fee).toFixed(2)})
+                </div>
               </div>
+              {entry_price > 0 && (
+                <div className="flex gap-2">
+                  <span className="text-xs">Entry: {entry_price.toFixed(2)}</span>
+                  {tp_price && <span className="text-xs">TP: {tp_price.toFixed(2)}</span>}
+                  {sl_price && <span className="text-xs">SL: {sl_price.toFixed(2)}</span>}
+                </div>
+              )}
+              {entry_price > 0 && (
+                <div className="flex gap-2">
+                  {tp_price && (
+                    <span className="text-xs">
+                      Profit: {Math.abs((tp_price - entry_price) * quantity).toFixed(2)}
+                    </span>
+                  )}
+                  {sl_price && (
+                    <span className="text-xs">
+                      Loss: -{Math.abs((sl_price - entry_price) * quantity).toFixed(2)}
+                    </span>
+                  )}
+                  {risk_ratio > 0 && (
+                    <span className="text-xs">RR: 1 to {risk_ratio.toFixed(1)}</span>
+                  )}
+                </div>
+              )}
             </div>
-            <div className="flex justify-between text-sm opacity-40">
-              <div>Fee: {fee.toFixed(2)}</div>
-              <div className={cn(getTextColor(pnl))}>
-                PnL: {pnl.toFixed(2)} ({(pnl - fee).toFixed(2)})
-              </div>
-            </div>
-            {entry_price > 0 && (
-              <div className="flex gap-2">
-                <span className="text-xs">Entry: {entry_price.toFixed(2)}</span>
-                {tp_price && <span className="text-xs">TP: {tp_price.toFixed(2)}</span>}
-                {sl_price && <span className="text-xs">SL: {sl_price.toFixed(2)}</span>}
-              </div>
-            )}
-            {entry_price > 0 && (
-              <div className="flex gap-2">
-                {tp_price && (
-                  <span className="text-xs">
-                    Profit: {Math.abs((tp_price - entry_price) * quantity).toFixed(2)}
-                  </span>
-                )}
-                {sl_price && (
-                  <span className="text-xs">
-                    Loss: -{Math.abs((sl_price - entry_price) * quantity).toFixed(2)}
-                  </span>
-                )}
-                {risk_ratio > 0 && (
-                  <span className="text-xs">RR: 1 to {risk_ratio.toFixed(1)}</span>
-                )}
-              </div>
-            )}
-          </div>
-        );
-      })}
+          );
+        })}
     </section>
   );
 }

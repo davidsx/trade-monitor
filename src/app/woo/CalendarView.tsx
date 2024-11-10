@@ -8,6 +8,7 @@ import {
   format,
   startOfMonth,
   endOfMonth,
+  addHours,
 } from 'date-fns';
 import { cn } from '@/styles';
 import { Weekdays } from '@/constants/date';
@@ -63,12 +64,12 @@ export default function CalendarView({ trades }: { trades: ParsedTrade[] }): JSX
           <IconChevronRight />
         </button>
       </div>
-      <div className="rounded-md">
-        <div className="flex gap-1 py-2">
+      <div className="flex flex-col gap-1 rounded-md">
+        <div className="flex gap-1 rounded-md bg-zinc-800 py-2">
           {Weekdays.map((weekday) => (
             <div
               key={weekday}
-              className="text-teal flex-1 rounded border border-slate-600 py-1 text-center text-xs md:text-base"
+              className="text-teal flex-1 py-1 text-center text-xs uppercase text-zinc-500 md:text-base"
             >
               {weekday}
             </div>
@@ -76,7 +77,7 @@ export default function CalendarView({ trades }: { trades: ParsedTrade[] }): JSX
         </div>
         <div className="grid auto-cols-[60px] grid-cols-[repeat(7,minmax(0,1fr))] place-items-center gap-1">
           {Array.from({ length: daysInCalendar }).map((_, index) => {
-            const date = startOfDay(addDays(startOfCalendar, index));
+            const date = addDays(startOfCalendar, index);
             const isWithinThisMonth = date.getMonth() === month;
             const isToday = compareDateOnly(date, today);
             // const rowOfDate = Math.ceil((index + 1) / 7);
@@ -88,7 +89,9 @@ export default function CalendarView({ trades }: { trades: ParsedTrade[] }): JSX
             const tradesOnDate = isWithinThisMonth
               ? trades.filter(
                   (trade) =>
-                    trade.realized_pnl !== null && compareDateOnly(trade.timestamp, date),
+                    trade.realized_pnl !== null &&
+                    trade.timestamp >= date.getTime() &&
+                    trade.timestamp <= addHours(date, 24).getTime(),
                 )
               : [];
             const pnlOnDate = tradesOnDate.reduce(
@@ -99,22 +102,21 @@ export default function CalendarView({ trades }: { trades: ParsedTrade[] }): JSX
               <div
                 key={date.getTime()}
                 className={cn(
-                  'relative flex w-full flex-col items-start justify-start p-1',
-                  'rounded border border-slate-600 md:aspect-square',
-                  !isWithinThisMonth && 'text-grey font-thin',
-                  isToday && 'bg-teal01',
+                  'min-size-8 relative flex aspect-square w-full flex-col items-center justify-center gap-1 rounded-md border border-zinc-800 bg-zinc-900 p-1',
+
                   // isFirstRow && 'md:border-t-0',
                   // isLastRow && 'md:border-b-0',
                   // isFirstColumn && 'md:border-l-0',
                   // isLastColumn && 'md:border-r-0',
-                  pnlOnDate > 0 && 'bg-teal-500 bg-opacity-20 text-green-500',
-                  pnlOnDate < 0 && 'bg-red-500 bg-opacity-20 text-red-500',
+                  pnlOnDate > 0 && 'bg-green-700 bg-opacity-20',
+                  pnlOnDate < 0 && 'bg-red-700 bg-opacity-20',
                 )}
               >
                 <div
                   className={cn(
-                    'flex size-8 items-start justify-start rounded-full text-xs md:size-10 md:text-2xl',
-                    isToday && 'border-b border-b-black',
+                    'text-xs text-zinc-300 md:size-10 md:text-2xl',
+                    !isWithinThisMonth && 'font-thin text-zinc-600',
+                    isToday && 'border-b border-b-zinc-300',
                   )}
                   suppressHydrationWarning
                 >
@@ -124,9 +126,12 @@ export default function CalendarView({ trades }: { trades: ParsedTrade[] }): JSX
                   className={cn(
                     'flex min-w-9 items-center justify-center gap-0.5 text-xs md:text-base',
                     tradesOnDate.length === 0 && 'opacity-0',
+                    pnlOnDate > 0 && 'text-green-500',
+                    pnlOnDate < 0 && 'text-red-500',
                   )}
                 >
-                  <span>{pnlOnDate.toFixed(2)}</span>
+                  <span>{pnlOnDate.toFixed(0)}</span>
+                  <span>{tradesOnDate.length}</span>
                 </div>
               </div>
             );

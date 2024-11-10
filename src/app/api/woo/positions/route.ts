@@ -22,20 +22,23 @@ export async function GET() {
   );
 
   const equity = accountInfo.data.totalAccountValue;
-  const balance = equity - unrealized - realized + fee;
+  const startingBalance = equity - unrealized - realized + fee;
+  const balance = equity - unrealized;
 
-  const unrealized_percent = (unrealized / balance) * 100;
-  const realized_percent = (realized / balance) * 100;
+  const unrealized_percent = (unrealized / startingBalance) * 100;
+  const realized_percent = (realized / startingBalance) * 100;
 
   const pnl = unrealized + realized - fee;
-  const pnl_percent = (pnl / balance) * 100;
-  const fee_percent = (fee / balance) * 100;
+  const pnl_percent = (pnl / startingBalance) * 100;
+  const fee_percent = (fee / startingBalance) * 100;
 
   return NextResponse.json({
+    startingBalance,
+    balance,
+    equity,
     unrealized,
     realized,
     fee,
-    balance,
     unrealized_percent,
     realized_percent,
     pnl,
