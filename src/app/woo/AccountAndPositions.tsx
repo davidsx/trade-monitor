@@ -96,11 +96,7 @@ export default function AccountAndPositions() {
         </div> */}
       </div>
       {positionDetail.positions
-        .sort((a, b) =>
-          a.unrealized_pnl && a.unrealized_pnl
-            ? b.unrealized_pnl - a.unrealized_pnl
-            : b.pnl - a.pnl,
-        )
+        .sort((a, b) => b.unrealized_pnl - a.unrealized_pnl)
         .map((position) => {
           const {
             symbol,
