@@ -26,8 +26,9 @@ export interface Position {
 
 export interface PositionDetail {
   startingBalance: number;
-  equity: number;
   balance: number;
+  balance_percent: number;
+  equity: number;
   unrealized: number;
   realized: number;
   fee: number;

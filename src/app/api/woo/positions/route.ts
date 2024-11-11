@@ -24,6 +24,7 @@ export async function GET() {
   const equity = accountInfo.data.totalAccountValue;
   const startingBalance = equity - unrealized - realized + fee;
   const balance = equity - unrealized;
+  const balance_percent = ((balance - startingBalance) / startingBalance) * 100;
 
   const unrealized_percent = (unrealized / startingBalance) * 100;
   const realized_percent = (realized / startingBalance) * 100;
@@ -35,6 +36,7 @@ export async function GET() {
   return NextResponse.json({
     startingBalance,
     balance,
+    balance_percent,
     equity,
     unrealized,
     realized,
@@ -73,7 +75,7 @@ export async function GET() {
         unrealized_pnl,
         fee: fee24H,
         pnl: pnl24H,
-      risk_ratio: riskRatio,
+        risk_ratio: riskRatio,
       };
     }),
   } as PositionDetail);

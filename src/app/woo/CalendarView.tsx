@@ -8,7 +8,7 @@ import {
   format,
   startOfMonth,
   endOfMonth,
-  addHours,
+  endOfDay,
 } from 'date-fns';
 import { cn } from '@/styles';
 import { Weekdays } from '@/constants/date';
@@ -16,6 +16,7 @@ import { useState } from 'react';
 import { ParsedTrade } from '@/types';
 import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import { compareDateOnly } from '@/utils';
+import { fromZonedTime } from 'date-fns-tz';
 
 export default function CalendarView({ trades }: { trades: ParsedTrade[] }): JSX.Element {
   const [month, setMonth] = useState(new Date().getMonth());
@@ -50,26 +51,26 @@ export default function CalendarView({ trades }: { trades: ParsedTrade[] }): JSX
 
   return (
     <div className="flex w-full flex-col justify-start gap-2">
-      <div className="bg-teal01 flex min-h-10 w-full items-center justify-between rounded-full px-4 py-4">
-        <button onClick={goToPrevMonth}>
+      <div className="bg-teal01 flex min-h-10 w-full items-center justify-between rounded-full">
+        {/* <button onClick={goToPrevMonth}>
           <IconChevronLeft />
-        </button>
-        <div className="flex flex-col items-center">
+        </button> */}
+        <div className="flex flex-row items-center justify-between w-full">
           <span className="text-xl" suppressHydrationWarning>
             {format(calendarDate, 'yyyy MMMM')}
           </span>
           <span className="text-sm uppercase">{trades.length || 'No'} Trades</span>
         </div>
-        <button onClick={goToNextMonth}>
+        {/* <button onClick={goToNextMonth}>
           <IconChevronRight />
-        </button>
+        </button> */}
       </div>
       <div className="flex flex-col gap-1 rounded-md">
         <div className="flex gap-1 rounded-md bg-zinc-800 py-2">
           {Weekdays.map((weekday) => (
             <div
               key={weekday}
-              className="text-teal flex-1 py-1 text-center text-xs uppercase text-zinc-500 md:text-base"
+              className="text-teal flex-1 py-1 text-center text-xs uppercase text-zinc-500"
             >
               {weekday}
             </div>
@@ -78,20 +79,17 @@ export default function CalendarView({ trades }: { trades: ParsedTrade[] }): JSX
         <div className="grid auto-cols-[60px] grid-cols-[repeat(7,minmax(0,1fr))] place-items-center gap-1">
           {Array.from({ length: daysInCalendar }).map((_, index) => {
             const date = addDays(startOfCalendar, index);
+            const dateStart = fromZonedTime(date, 'UTC');
+            const dateEnd = fromZonedTime(endOfDay(date), 'UTC');
             const isWithinThisMonth = date.getMonth() === month;
             const isToday = compareDateOnly(date, today);
-            // const rowOfDate = Math.ceil((index + 1) / 7);
-            // const isFirstRow = rowOfDate === 1;
-            // const isLastRow = rowOfDate === totalRowsInCalendar;
-            // const isFirstColumn = index % 7 === 0;
-            // const isLastColumn = (index + 1) % 7 === 0;
 
             const tradesOnDate = isWithinThisMonth
               ? trades.filter(
                   (trade) =>
                     trade.realized_pnl !== null &&
-                    trade.timestamp >= date.getTime() &&
-                    trade.timestamp <= addHours(date, 24).getTime(),
+                    trade.timestamp >= dateStart.getTime() &&
+                    trade.timestamp <= dateEnd.getTime(),
                 )
               : [];
             const pnlOnDate = tradesOnDate.reduce(
@@ -102,19 +100,14 @@ export default function CalendarView({ trades }: { trades: ParsedTrade[] }): JSX
               <div
                 key={date.getTime()}
                 className={cn(
-                  'min-size-8 relative flex aspect-square w-full flex-col items-center justify-center gap-1 rounded-md border border-zinc-800 bg-zinc-900 p-1',
-
-                  // isFirstRow && 'md:border-t-0',
-                  // isLastRow && 'md:border-b-0',
-                  // isFirstColumn && 'md:border-l-0',
-                  // isLastColumn && 'md:border-r-0',
+                  'min-size-8 md:min-size-10 relative flex aspect-square w-full flex-col items-center justify-center gap-2 rounded-md border border-zinc-800 bg-zinc-900 p-1 text-center',
                   pnlOnDate > 0 && 'bg-green-700 bg-opacity-20',
                   pnlOnDate < 0 && 'bg-red-700 bg-opacity-20',
                 )}
               >
                 <div
                   className={cn(
-                    'text-xs text-zinc-300 md:size-10 md:text-2xl',
+                    'text-xs text-zinc-300',
                     !isWithinThisMonth && 'font-thin text-zinc-600',
                     isToday && 'border-b border-b-zinc-300',
                   )}
@@ -124,14 +117,13 @@ export default function CalendarView({ trades }: { trades: ParsedTrade[] }): JSX
                 </div>
                 <div
                   className={cn(
-                    'flex min-w-9 items-center justify-center gap-0.5 text-xs md:text-base',
+                    'flex min-w-9 items-center justify-center gap-0.5 text-xs',
                     tradesOnDate.length === 0 && 'opacity-0',
                     pnlOnDate > 0 && 'text-green-500',
                     pnlOnDate < 0 && 'text-red-500',
                   )}
                 >
-                  <span>{pnlOnDate.toFixed(0)}</span>
-                  <span>{tradesOnDate.length}</span>
+                  <span>{pnlOnDate.toFixed(2)}</span>
                 </div>
               </div>
             );
