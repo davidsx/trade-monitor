@@ -49,6 +49,8 @@ export default function CalendarView({ trades }: { trades: ParsedTrade[] }): JSX
     setYear(nextYear);
   };
 
+  if (!trades.length) return <></>;
+
   return (
     <div className="flex w-full flex-col justify-start gap-2">
       <div className="bg-teal01 flex min-h-10 w-full items-center justify-between rounded-full">

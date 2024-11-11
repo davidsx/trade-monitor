@@ -156,6 +156,11 @@ export default function AccountAndPositions() {
                     {sl_price && (
                       <span className="text-xs text-red-500">SL: {sl_price.toFixed(2)}</span>
                     )}
+                    {sl_price && (
+                      <span className="text-xs text-zinc-500">
+                        Risk: {Math.abs(sl_price / balance).toFixed(2)}
+                      </span>
+                    )}
                   </div>
                 )}
                 {entry_price > 0 && (
