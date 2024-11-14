@@ -227,8 +227,8 @@ export default function AccountAndPositions() {
                 )}
               </div>
               <div className="flex flex-col items-end gap-1">
-                <div className={cn('font-medium', getTextColor(unrealized_pnl))}>
-                  {unrealized_pnl.toFixed(2)}
+                <div className={cn('text-md', getTextColor(unrealized_pnl))}>
+                  {unrealized_pnl.toFixed(2)} ({Math.abs(unrealized_pnl / ((sl_price - entry_price) * quantity)).toFixed(2)}R)
                 </div>
                 <div className={cn(getTextColor(pnl - fee), 'text-sm')}>
                   PnL: {(pnl - fee).toFixed(2)}
