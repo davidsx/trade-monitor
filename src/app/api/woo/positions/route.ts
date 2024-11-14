@@ -22,16 +22,16 @@ export async function GET() {
   );
 
   const equity = accountInfo.data.totalAccountValue;
-  const startingBalance = equity - unrealized - realized + fee;
+  const starting_balance = equity - unrealized - realized + fee;
   const balance = equity - unrealized;
-  const balance_percent = ((balance - startingBalance) / startingBalance) * 100;
+  const balance_percent = ((balance - starting_balance) / starting_balance) * 100;
 
-  const unrealized_percent = (unrealized / startingBalance) * 100;
-  const realized_percent = (realized / startingBalance) * 100;
+  const unrealized_percent = (unrealized / starting_balance) * 100;
+  const realized_percent = (realized / starting_balance) * 100;
 
   const pnl = unrealized + realized - fee;
-  const pnl_percent = (pnl / startingBalance) * 100;
-  const fee_percent = (fee / startingBalance) * 100;
+  const pnl_percent = (pnl / starting_balance) * 100;
+  const fee_percent = (fee / starting_balance) * 100;
 
   const positions = positionResponse.data.positions.map((position) => {
     const { symbol, fee24H, pnl24H, positionSide, averageOpenPrice, markPrice, holding } = position;
@@ -71,7 +71,7 @@ export async function GET() {
       (entry_price && sl_price && quantity ? Math.abs((sl_price - entry_price) * quantity) : 0),
     0,
   );
-  const total_risk_percent = (total_risk / startingBalance) * 100;
+  const total_risk_percent = (total_risk / balance) * 100;
 
   const total_target = positions.reduce(
     (acc, { tp_price, entry_price, quantity }) =>
@@ -79,10 +79,10 @@ export async function GET() {
       (entry_price && tp_price && quantity ? Math.abs((tp_price - entry_price) * quantity) : 0),
     0,
   );
-  const total_target_percent = (total_target / startingBalance) * 100;
+  const total_target_percent = (total_target / balance) * 100;
 
   return NextResponse.json({
-    startingBalance,
+    starting_balance,
     balance,
     balance_percent,
     equity,

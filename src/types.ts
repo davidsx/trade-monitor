@@ -25,7 +25,7 @@ export interface Position {
 }
 
 export interface PositionDetail {
-  startingBalance: number;
+  starting_balance: number;
   balance: number;
   balance_percent: number;
   equity: number;

@@ -15,7 +15,7 @@ export default function AccountAndPositions() {
   if (!positionDetail) return null;
 
   const {
-    startingBalance,
+    starting_balance,
     balance,
     balance_percent,
     equity,
@@ -56,7 +56,7 @@ export default function AccountAndPositions() {
         <div className="flex w-full items-center rounded-xl border border-zinc-500 p-4">
           <div className="flex flex-col items-start">
             <div className="text-md opacity-50">Starting Balance</div>
-            <div className="text-xl">{startingBalance.toFixed(2)}</div>
+            <div className="text-xl">{starting_balance.toFixed(2)}</div>
             <div className="text-sm opacity-50">Target 50%</div>
           </div>
           <div className="flex flex-1 flex-col items-center justify-center">
@@ -121,7 +121,7 @@ export default function AccountAndPositions() {
             <div className="text-md opacity-50">Daily Loss</div>
             <div className="text-xl text-red-500">{totalLossToday.toFixed(2)}</div>
             <span className="text-red-500 opacity-80">
-              ({((totalLossToday / startingBalance) * 100).toFixed(2)}%)
+              ({((totalLossToday / starting_balance) * 100).toFixed(2)}%)
             </span>
           </div>
           <div className="flex flex-1 flex-col items-center justify-center">
@@ -134,7 +134,7 @@ export default function AccountAndPositions() {
             <div className="text-md opacity-50">Daily Profit</div>
             <div className="text-xl text-green-500">{totalProfitToday.toFixed(2)}</div>
             <span className="text-green-500 opacity-80">
-              ({((totalProfitToday / startingBalance) * 100).toFixed(2)}%)
+              ({((totalProfitToday / starting_balance) * 100).toFixed(2)}%)
             </span>
           </div>
         </div>
