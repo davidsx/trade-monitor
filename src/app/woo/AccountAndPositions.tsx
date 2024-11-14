@@ -6,13 +6,14 @@ import { IconArrowLeft, IconArrowRight, IconEqual, IconPlus } from '@tabler/icon
 import useSWR from 'swr';
 
 export default function AccountAndPositions() {
-  const { data: positionDetail } = useSWR(
+  const { data: positionDetail, isLoading } = useSWR(
     '/api/woo/positions',
     (url) => fetch(url).then((res) => res.json() as Promise<PositionDetail>),
     { refreshInterval: 500 },
   );
 
   if (!positionDetail) return null;
+  if (isLoading) return <div>Loading Account and Positions...</div>;
 
   const {
     starting_balance,

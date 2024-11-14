@@ -8,10 +8,13 @@ import { ParsedTrade } from '@/types';
 // import { endOfDay, startOfDay } from 'date-fns';
 
 export default function TradeHistory() {
-  const { data: trades = [] } = useSWR(
+  const { data: trades = [], isLoading } = useSWR(
     `/api/woo/trades`,
     (url) => fetch(url).then((res) => res.json()) as Promise<ParsedTrade[]>,
   );
+
+  if (trades.length === 0) return null;
+  if (isLoading) return <div>Loading trade history...</div>;
 
   const winRate = trades.filter(({ realized_pnl }) => realized_pnl > 0).length / trades.length;
   const avgPnl = trades.reduce((acc, { realized_pnl }) => acc + realized_pnl, 0) / trades.length;
