@@ -216,7 +216,11 @@ export default function AccountAndPositions() {
                     )}
                     {sl_price && (
                       <span className="text-xs text-zinc-500">
-                        Risk: {Math.abs(sl_price / balance).toFixed(2)} (1:{risk_ratio.toFixed(1)})
+                        Risk:
+                        {Math.abs((((sl_price - entry_price) * quantity) / balance) * 100).toFixed(
+                          2,
+                        )}
+                        % (1:{risk_ratio.toFixed(1)})
                       </span>
                     )}
                   </div>
