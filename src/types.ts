@@ -37,5 +37,9 @@ export interface PositionDetail {
   pnl: number;
   pnl_percent: number;
   fee_percent: number;
+  total_risk: number;
+  total_risk_percent: number;
+  total_target: number;
+  total_target_percent: number;
   positions: Position[];
 }

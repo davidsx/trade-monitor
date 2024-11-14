@@ -33,6 +33,54 @@ export async function GET() {
   const pnl_percent = (pnl / startingBalance) * 100;
   const fee_percent = (fee / startingBalance) * 100;
 
+  const positions = positionResponse.data.positions.map((position) => {
+    const { symbol, fee24H, pnl24H, positionSide, averageOpenPrice, markPrice, holding } = position;
+    const unrealized_pnl = (markPrice - averageOpenPrice) * holding;
+    const algoOrders =
+      openingOrderResponse.data.rows.find(
+        (algoOrder) =>
+          position.symbol === algoOrder.symbol &&
+          position.positionSide === algoOrder.positionSide &&
+          algoOrder.algoType === 'POSITIONAL_TP_SL',
+      )?.childOrders || [];
+    const tpOrder = algoOrders.find((algoOrder) => algoOrder.algoType === 'TAKE_PROFIT');
+    const tpPrice = tpOrder?.triggerPrice;
+    const slOrder = algoOrders.find((algoOrder) => algoOrder.algoType === 'STOP_LOSS');
+    const slPrice = slOrder?.triggerPrice;
+    const riskRatio =
+      Math.abs((tpPrice || averageOpenPrice) - averageOpenPrice) /
+      Math.abs((slPrice || averageOpenPrice) - averageOpenPrice);
+    return {
+      symbol,
+      position_side: positionSide,
+      quantity: holding,
+      entry_price: averageOpenPrice,
+      mark_price: markPrice,
+      tp_price: tpPrice,
+      sl_price: slPrice,
+      unrealized_pnl,
+      fee: fee24H,
+      pnl: pnl24H,
+      risk_ratio: riskRatio,
+    };
+  });
+
+  const total_risk = positions.reduce(
+    (acc, { sl_price, entry_price, quantity }) =>
+      acc +
+      (entry_price && sl_price && quantity ? Math.abs((sl_price - entry_price) * quantity) : 0),
+    0,
+  );
+  const total_risk_percent = (total_risk / startingBalance) * 100;
+
+  const total_target = positions.reduce(
+    (acc, { tp_price, entry_price, quantity }) =>
+      acc +
+      (entry_price && tp_price && quantity ? Math.abs((tp_price - entry_price) * quantity) : 0),
+    0,
+  );
+  const total_target_percent = (total_target / startingBalance) * 100;
+
   return NextResponse.json({
     startingBalance,
     balance,
@@ -46,37 +94,10 @@ export async function GET() {
     pnl,
     pnl_percent,
     fee_percent,
-    positions: positionResponse.data.positions.map((position) => {
-      const { symbol, fee24H, pnl24H, positionSide, averageOpenPrice, markPrice, holding } =
-        position;
-      const unrealized_pnl = (markPrice - averageOpenPrice) * holding;
-      const algoOrders =
-        openingOrderResponse.data.rows.find(
-          (algoOrder) =>
-            position.symbol === algoOrder.symbol &&
-            position.positionSide === algoOrder.positionSide &&
-            algoOrder.algoType === 'POSITIONAL_TP_SL',
-        )?.childOrders || [];
-      const tpOrder = algoOrders.find((algoOrder) => algoOrder.algoType === 'TAKE_PROFIT');
-      const tpPrice = tpOrder?.triggerPrice;
-      const slOrder = algoOrders.find((algoOrder) => algoOrder.algoType === 'STOP_LOSS');
-      const slPrice = slOrder?.triggerPrice;
-      const riskRatio =
-        Math.abs((tpPrice || averageOpenPrice) - averageOpenPrice) /
-        Math.abs((slPrice || averageOpenPrice) - averageOpenPrice);
-      return {
-        symbol,
-        position_side: positionSide,
-        quantity: holding,
-        entry_price: averageOpenPrice,
-        mark_price: markPrice,
-        tp_price: tpPrice,
-        sl_price: slPrice,
-        unrealized_pnl,
-        fee: fee24H,
-        pnl: pnl24H,
-        risk_ratio: riskRatio,
-      };
-    }),
+    total_risk,
+    total_risk_percent,
+    total_target,
+    total_target_percent,
+    positions,
   } as PositionDetail);
 }
