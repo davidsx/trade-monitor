@@ -37,10 +37,10 @@ export default function AccountAndPositions() {
     (position) => position.unrealized_pnl === 0 && position.quantity === 0,
   );
 
-  const lossPositions = closedPositions.filter((position) => position.pnl < 0);
-  const profitPositions = closedPositions.filter((position) => position.pnl > 0);
-  const totalLossToday = lossPositions.reduce((acc, { pnl }) => pnl + acc, 0);
-  const totalProfitToday = profitPositions.reduce((acc, { pnl }) => pnl + acc, 0);
+  const lossPositions = positionDetail.positions.filter((position) => position.pnl < 0);
+  const profitPositions = positionDetail.positions.filter((position) => position.pnl > 0);
+  const totalLossToday = lossPositions.reduce((acc, { pnl, fee }) => pnl - fee + acc, 0);
+  const totalProfitToday = profitPositions.reduce((acc, { pnl, fee }) => pnl - fee + acc, 0);
 
   const getTextColor = (value: number, base: number = 0) =>
     cn('text-gray-500', value > base && 'text-green-500', value < base && 'text-red-500');
