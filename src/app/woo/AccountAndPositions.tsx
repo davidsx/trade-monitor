@@ -56,7 +56,7 @@ export default function AccountAndPositions() {
         {/* Balance */}
         <div className="flex w-full items-center rounded-xl border border-zinc-500 p-4">
           <div className="flex flex-col items-start">
-            <div className="text-md opacity-50">Starting Balance</div>
+            <div className="text-sm opacity-50">Starting Balance</div>
             <div className="text-xl">{starting_balance.toFixed(2)}</div>
             <div className="text-sm opacity-50">Target 50%</div>
           </div>
@@ -67,28 +67,28 @@ export default function AccountAndPositions() {
             </div>
           </div>
           <div className="flex flex-col items-end">
-            <div className="text-md opacity-50">Current Balance</div>
+            <div className="text-sm opacity-50">Current Balance</div>
             <div className="text-xl">{balance.toFixed(2)}</div>
             <div className="text-sm opacity-50">Equity: {equity.toFixed(2)}</div>
           </div>
         </div>
         {/* Current PnL */}
         <div className="flex w-full flex-col items-center gap-2 rounded-xl border border-zinc-500 p-4">
-          <div className="flex w-full">
+          <div className="flex w-full items-center">
             <div className="flex flex-1 flex-col items-start">
-              <div className="text-md opacity-50">Realized PnL</div>
+              <div className="text-sm opacity-50">Realized</div>
               <div className="text-xl text-red-500">{realized.toFixed(2)}</div>
               <span className="text-red-500 opacity-80">({realized_percent.toFixed(2)}%)</span>
             </div>
-            <IconPlus size={24} />
+            <IconPlus size={16} />
             <div className="flex flex-1 flex-col items-center">
-              <div className="text-md opacity-50">Unrealized PnL</div>
+              <div className="text-sm opacity-50">Unrealized</div>
               <div className="text-xl text-green-500">{unrealized.toFixed(2)}</div>
               <span className="text-green-500 opacity-80">({unrealized_percent.toFixed(2)}%)</span>
             </div>
-            <IconEqual size={24} />
+            <IconEqual size={16} />
             <div className="flex flex-1 flex-col items-end">
-              <div className="text-md opacity-50">Total PnL</div>
+              <div className="text-sm opacity-50">PnL</div>
               <div className={cn('text-xl', getTextColor(pnl))}>{pnl.toFixed(2)}</div>
               <span className={cn('opacity-80', getTextColor(pnl_percent))}>
                 ({pnl_percent.toFixed(2)}%)
@@ -102,16 +102,16 @@ export default function AccountAndPositions() {
         {/* Expected Profit and Loss */}
         <div className="flex w-full items-center rounded-xl border border-zinc-500 p-4">
           <div className="flex flex-col items-start">
-            <div className="text-md opacity-50">Expected Loss</div>
+            <div className="text-sm opacity-50">Expected Loss</div>
             <div className="text-xl text-red-500">{total_risk.toFixed(2)}</div>
             <span className="text-red-500 opacity-80">({total_risk_percent.toFixed(2)}%)</span>
           </div>
-          <div className="flex flex-1 flex-col items-center justify-center">
+          <div className="flex flex-1 flex-col items-center justify-center text-sm">
             <div>Risk ratio</div>
-            <div className="text-sm">1 : {(total_target / total_risk).toFixed(2)}</div>
+            <div>1 : {(total_target / total_risk).toFixed(2)}</div>
           </div>
           <div className="flex flex-col items-end">
-            <div className="text-md opacity-50">Expected Profit</div>
+            <div className="text-sm opacity-50">Expected Profit</div>
             <div className="text-xl text-green-500">{total_target.toFixed(2)}</div>
             <span className="text-green-500 opacity-80">({total_target_percent.toFixed(2)}%)</span>
           </div>
@@ -119,20 +119,18 @@ export default function AccountAndPositions() {
         {/* Closed Positions */}
         <div className="flex w-full items-center rounded-xl border border-zinc-500 p-4">
           <div className="flex flex-col items-start">
-            <div className="text-md opacity-50">Daily Loss</div>
+            <div className="text-sm opacity-50">Daily Loss</div>
             <div className="text-xl text-red-500">{totalLossToday.toFixed(2)}</div>
             <span className="text-red-500 opacity-80">
               ({((totalLossToday / starting_balance) * 100).toFixed(2)}%)
             </span>
           </div>
-          <div className="flex flex-1 flex-col items-center justify-center">
+          <div className="flex flex-1 flex-col items-center justify-center text-sm">
             <div>Win rate</div>
-            <div className="text-sm">
-              {((profitPositions.length || 1) / (closedPositions.length || 1)) * 100}%
-            </div>
+            <div>{((profitPositions.length || 1) / (closedPositions.length || 1)) * 100}%</div>
           </div>
           <div className="flex flex-col items-end">
-            <div className="text-md opacity-50">Daily Profit</div>
+            <div className="text-sm opacity-50">Daily Profit</div>
             <div className="text-xl text-green-500">{totalProfitToday.toFixed(2)}</div>
             <span className="text-green-500 opacity-80">
               ({((totalProfitToday / starting_balance) * 100).toFixed(2)}%)
@@ -229,7 +227,8 @@ export default function AccountAndPositions() {
               </div>
               <div className="flex flex-col items-end gap-1">
                 <div className={cn('text-md', getTextColor(unrealized_pnl))}>
-                  {unrealized_pnl.toFixed(2)} ({Math.abs(unrealized_pnl / ((sl_price - entry_price) * quantity)).toFixed(2)}R)
+                  {unrealized_pnl.toFixed(2)} (
+                  {Math.abs(unrealized_pnl / ((sl_price - entry_price) * quantity)).toFixed(2)}R)
                 </div>
                 <div className={cn(getTextColor(pnl - fee), 'text-sm')}>
                   PnL: {(pnl - fee).toFixed(2)}
