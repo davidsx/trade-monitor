@@ -2,6 +2,7 @@
 
 import { cn } from '@/styles';
 import { PositionDetail } from '@/types';
+import { IconArrowLeft, IconArrowRight, IconEqual, IconPlus } from '@tabler/icons-react';
 import useSWR from 'swr';
 
 export default function AccountAndPositions() {
@@ -32,6 +33,15 @@ export default function AccountAndPositions() {
     total_target_percent,
   } = positionDetail;
 
+  const closedPositions = positionDetail.positions.filter(
+    (position) => position.unrealized_pnl === 0 && position.quantity === 0,
+  );
+
+  const lossPositions = closedPositions.filter((position) => position.pnl < 0);
+  const profitPositions = closedPositions.filter((position) => position.pnl > 0);
+  const totalLossToday = lossPositions.reduce((acc, { pnl }) => pnl + acc, 0);
+  const totalProfitToday = profitPositions.reduce((acc, { pnl }) => pnl + acc, 0);
+
   const getTextColor = (value: number, base: number = 0) =>
     cn('text-gray-500', value > base && 'text-green-500', value < base && 'text-red-500');
 
@@ -41,59 +51,92 @@ export default function AccountAndPositions() {
       <h2 className="text-2xl">Portfolio</h2>
       <div className="font-semibold">{challengeText.join(' / ')}</div>
     </div> */}
-      <div className="h-full text-sm">
-        <div className="flex items-center gap-2">
-          <h3 className="text-md opacity-50">Starting Balance</h3>
-          <span>{startingBalance.toFixed(2)}</span>
+      <div className="flex h-full flex-col gap-2">
+        {/* Balance */}
+        <div className="flex w-full items-center rounded-xl border border-zinc-500 p-4">
+          <div className="flex flex-col items-start">
+            <div className="text-md opacity-50">Starting Balance</div>
+            <div className="text-xl">{startingBalance.toFixed(2)}</div>
+            <div className="text-sm opacity-50">Target 50%</div>
+          </div>
+          <div className="flex flex-1 flex-col items-center justify-center">
+            <IconArrowRight size={24} />
+            <div className={cn('text-sm', getTextColor(balance_percent))}>
+              ({balance_percent.toFixed(2)}%)
+            </div>
+          </div>
+          <div className="flex flex-col items-end">
+            <div className="text-md opacity-50">Current Balance</div>
+            <div className="text-xl">{balance.toFixed(2)}</div>
+            <div className="text-sm opacity-50">Equity: {equity.toFixed(2)}</div>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <h3 className="text-md opacity-50">Current Balance</h3>
-          <span>{balance.toFixed(2)}</span>
-          <span className={cn('opacity-50', getTextColor(balance_percent))}>
-            ({balance_percent.toFixed(2)}%)
-          </span>
+        {/* Current PnL */}
+        <div className="flex w-full flex-col items-center gap-2 rounded-xl border border-zinc-500 p-4">
+          <div className="flex w-full">
+            <div className="flex flex-1 flex-col items-start">
+              <div className="text-md opacity-50">Realized PnL</div>
+              <div className="text-xl text-red-500">{realized.toFixed(2)}</div>
+              <span className="text-red-500 opacity-80">({realized_percent.toFixed(2)}%)</span>
+            </div>
+            <IconPlus size={24} />
+            <div className="flex flex-1 flex-col items-center">
+              <div className="text-md opacity-50">Unrealized PnL</div>
+              <div className="text-xl text-green-500">{unrealized.toFixed(2)}</div>
+              <span className="text-green-500 opacity-80">({unrealized_percent.toFixed(2)}%)</span>
+            </div>
+            <IconEqual size={24} />
+            <div className="flex flex-1 flex-col items-end">
+              <div className="text-md opacity-50">Total PnL</div>
+              <div className={cn('text-xl', getTextColor(pnl))}>{pnl.toFixed(2)}</div>
+              <span className={cn('opacity-80', getTextColor(pnl_percent))}>
+                ({pnl_percent.toFixed(2)}%)
+              </span>
+            </div>
+          </div>
+          <div className="text-md text-center opacity-50">
+            Fee: -{fee.toFixed(2)} ({fee_percent.toFixed(2)}%)
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <h3 className="text-md opacity-50">Equity</h3>
-          <span>{equity.toFixed(2)}</span>
+        {/* Expected Profit and Loss */}
+        <div className="flex w-full items-center rounded-xl border border-zinc-500 p-4">
+          <div className="flex flex-col items-start">
+            <div className="text-md opacity-50">Expected Loss</div>
+            <div className="text-xl text-red-500">{total_risk.toFixed(2)}</div>
+            <span className="text-red-500 opacity-80">({total_risk_percent.toFixed(2)}%)</span>
+          </div>
+          <div className="flex flex-1 flex-col items-center justify-center">
+            <div>Risk ratio</div>
+            <div className="text-sm">1 : {(total_target / total_risk).toFixed(2)}</div>
+          </div>
+          <div className="flex flex-col items-end">
+            <div className="text-md opacity-50">Expected Profit</div>
+            <div className="text-xl text-green-500">{total_target.toFixed(2)}</div>
+            <span className="text-green-500 opacity-80">({total_target_percent.toFixed(2)}%)</span>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <h3 className="text-md opacity-50">Total PnL</h3>
-          <span className={getTextColor(pnl)}>{pnl.toFixed(2)}</span>
-          <span className={cn('opacity-50', getTextColor(pnl_percent))}>
-            ({pnl_percent.toFixed(2)}%)
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          <h3 className="text-md opacity-50">Unrealized</h3>
-          <span className={cn(getTextColor(unrealized), 'opacity-60')}>
-            {unrealized.toFixed(2)}
-          </span>
-          <span className={cn('opacity-50', getTextColor(unrealized_percent))}>
-            ({unrealized_percent.toFixed(2)}%)
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          <h3 className="text-md opacity-50">Realized</h3>
-          <span className={cn(getTextColor(realized), 'opacity-60')}>{realized.toFixed(2)}</span>
-          <span className={cn('opacity-50', getTextColor(realized_percent))}>
-            ({realized_percent.toFixed(2)}%)
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          <h3 className="text-md opacity-50">Fee</h3>
-          <span className="opacity-50">-{fee.toFixed(2)}</span>
-          <span className="opacity-50">({fee_percent.toFixed(2)}%)</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <h3 className="text-md opacity-50">Total Risk</h3>
-          <span className="text-red-500 opacity-50">{total_risk.toFixed(2)}</span>
-          <span className="text-red-500 opacity-50">({total_risk_percent.toFixed(2)}%)</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <h3 className="text-md opacity-50">Total Target</h3>
-          <span className="text-green-500 opacity-50">{total_target.toFixed(2)}</span>
-          <span className="text-green-500 opacity-50">({total_target_percent.toFixed(2)}%)</span>
+        {/* Closed Positions */}
+        <div className="flex w-full items-center rounded-xl border border-zinc-500 p-4">
+          <div className="flex flex-col items-start">
+            <div className="text-md opacity-50">Daily Loss</div>
+            <div className="text-xl text-red-500">{totalLossToday.toFixed(2)}</div>
+            <span className="text-red-500 opacity-80">
+              ({((totalLossToday / startingBalance) * 100).toFixed(2)}%)
+            </span>
+          </div>
+          <div className="flex flex-1 flex-col items-center justify-center">
+            <div>Win rate</div>
+            <div className="text-sm">
+              {((profitPositions.length || 1) / (closedPositions.length || 1)) * 100}%
+            </div>
+          </div>
+          <div className="flex flex-col items-end">
+            <div className="text-md opacity-50">Daily Profit</div>
+            <div className="text-xl text-green-500">{totalProfitToday.toFixed(2)}</div>
+            <span className="text-green-500 opacity-80">
+              ({((totalProfitToday / startingBalance) * 100).toFixed(2)}%)
+            </span>
+          </div>
         </div>
       </div>
       {/* <div className="flex h-full flex-col items-end">
@@ -110,13 +153,8 @@ export default function AccountAndPositions() {
           </Link>
         </div> */}
       {positionDetail.positions
-        .sort((a, b) => {
-          // First sort by whether they have unrealized PnL
-          if (a.unrealized_pnl !== 0 && b.unrealized_pnl === 0) return -1;
-          if (a.unrealized_pnl === 0 && b.unrealized_pnl !== 0) return 1;
-          // Then sort by unrealized PnL value
-          return b.unrealized_pnl - a.unrealized_pnl;
-        })
+        .filter((position) => position.unrealized_pnl !== 0 && position.quantity !== 0)
+        .sort((a, b) => a.unrealized_pnl - b.unrealized_pnl)
         .map((position) => {
           const {
             symbol,
@@ -201,6 +239,46 @@ export default function AccountAndPositions() {
             </div>
           );
         })}
+      <div className="grid grid-cols-2 gap-2">
+        {positionDetail.positions
+          .filter((position) => position.unrealized_pnl === 0 && position.quantity === 0)
+          .map((position) => {
+            const { symbol, position_side, fee, pnl } = position;
+            return (
+              <div
+                className={cn(
+                  'relative flex flex-row gap-1 rounded-xl border-4 bg-[#262728] p-2',
+                  pnl - fee > 0 && 'border-green-500/50',
+                  pnl - fee < 0 && 'border-red-500/50',
+                )}
+                key={`${symbol}-${position_side}`}
+              >
+                <div className="flex flex-1 flex-col gap-1">
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="whitespace-nowrap">
+                      {symbol.replace('PERP_', '').replace('_USDT', '')}-PERP
+                    </span>
+                    <div
+                      className={cn(
+                        'text-2xs w-min rounded-md px-1 py-0.5 text-center text-white',
+                        position_side === 'LONG' && 'bg-teal-500 bg-opacity-20 text-green-500',
+                        position_side === 'SHORT' && 'bg-red-500 bg-opacity-20 text-red-500',
+                      )}
+                    >
+                      {position_side}
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between gap-1">
+                    <div className="text-sm text-zinc-500">Fee: {fee.toFixed(2)}</div>
+                    <div className={cn('text-md', getTextColor(pnl - fee))}>
+                      {(pnl - fee).toFixed(2)}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+      </div>
     </section>
   );
 }
