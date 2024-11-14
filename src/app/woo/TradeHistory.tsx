@@ -13,6 +13,14 @@ export default function TradeHistory() {
 
   const winRate = trades.filter(({ realized_pnl }) => realized_pnl > 0).length / trades.length;
   const avgPnl = trades.reduce((acc, { realized_pnl }) => acc + realized_pnl, 0) / trades.length;
+  const totalProfit = trades.reduce(
+    (acc, { realized_pnl }) => (realized_pnl > 0 ? acc + realized_pnl : acc),
+    0,
+  );
+  const totalLoss = trades.reduce(
+    (acc, { realized_pnl }) => (realized_pnl < 0 ? acc + realized_pnl : 0),
+    0,
+  );
 
   return (
     <section className="flex flex-col gap-2">
@@ -23,6 +31,8 @@ export default function TradeHistory() {
       <div className="flex flex-col">
         <div className="text-sm text-zinc-500">Win rate: {winRate.toFixed(2)}</div>
         <div className="text-sm text-zinc-500">Avg PnL: {avgPnl.toFixed(2)}</div>
+        <div className="text-sm text-zinc-500">Total Profit: {totalProfit.toFixed(2)}</div>
+        <div className="text-sm text-zinc-500">Total Loss: {totalLoss.toFixed(2)}</div>
       </div>
       <div className="flex flex-col gap-6">
         <CalendarView trades={trades} />
