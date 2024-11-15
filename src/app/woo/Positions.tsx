@@ -109,7 +109,7 @@ export default function Positions({ positions }: Props) {
       </div>
       <div className="grid grid-cols-2 gap-2">
         {positions
-          .filter((position) => position.unrealized_pnl === 0 && position.quantity === 0)
+          .filter((position) => position.pnl !== 0)
           .map((position) => {
             const { symbol, position_side, fee, pnl } = position;
             return (

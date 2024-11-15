@@ -50,7 +50,7 @@ export default function Summary({ accountDetail }: Props) {
     <section className="flex h-full flex-col gap-2">
       {/* Balance */}
       <div className="flex w-full items-center rounded-xl border border-zinc-500 p-4">
-        <div className="flex flex-col items-start">
+        <div className="flex flex-col items-start flex-1">
           <div className="text-sm opacity-50">Starting Balance</div>
           <div className="text-xl">{starting_balance.toFixed(2)}</div>
           <div className="text-sm opacity-50">
@@ -63,7 +63,7 @@ export default function Summary({ accountDetail }: Props) {
             ({equity_percent.toFixed(2)}%)
           </div>
         </div>
-        <div className="flex flex-col items-end">
+        <div className="flex flex-col items-end flex-1">
           <div className="text-sm opacity-50">Equity</div>
           <div className="text-xl">{equity.toFixed(2)}</div>
           <div className="text-sm opacity-50">Current: {balance.toFixed(2)}</div>
@@ -97,7 +97,7 @@ export default function Summary({ accountDetail }: Props) {
           </div>
         </div>
         <div className="text-md w-full text-center text-right opacity-50">
-          Fee: -{fee.toFixed(2)} ({fee_percent.toFixed(2)}%)
+          Fee: -{fee.toFixed(2)} (-{fee_percent.toFixed(2)}%)
         </div>
       </div>
       {/* Expected Profit and Loss */}
