@@ -1,4 +1,4 @@
-export interface ParsedTrade {
+export interface Trade {
   id: string;
   symbol: string;
   position_side: 'LONG' | 'SHORT';
@@ -24,7 +24,7 @@ export interface Position {
   risk_ratio: number;
 }
 
-export interface PositionDetail {
+export interface AccountDetail {
   starting_balance: number;
   balance: number;
   balance_percent: number;
@@ -43,4 +43,5 @@ export interface PositionDetail {
   total_target: number;
   total_target_percent: number;
   positions: Position[];
+  trades: Trade[];
 }

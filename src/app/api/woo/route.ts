@@ -1,5 +1,5 @@
 import WooService from '@/service/woo';
-import { PositionDetail } from '@/types';
+import { Trade, AccountDetail } from '@/types';
 import { NextResponse } from 'next/server';
 
 const wooService = new WooService();
@@ -30,7 +30,7 @@ export async function GET() {
   const unrealized_percent = (unrealized / starting_balance) * 100;
   const realized_percent = (realized / starting_balance) * 100;
 
-  const pnl = unrealized + realized - fee;
+  const pnl = unrealized + realized;
   const pnl_percent = (pnl / starting_balance) * 100;
   const fee_percent = (fee / starting_balance) * 100;
 
@@ -67,9 +67,11 @@ export async function GET() {
   });
 
   const total_risk = positions.reduce(
-    (acc, { sl_price, entry_price, quantity }) =>
+    (acc, { sl_price, entry_price, quantity, position_side }) =>
       acc +
-      (entry_price && sl_price && quantity ? Math.abs((sl_price - entry_price) * quantity) : 0),
+      (entry_price && sl_price && quantity
+        ? (position_side === 'LONG' ? sl_price - entry_price : entry_price - sl_price) * quantity
+        : 0),
     0,
   );
   const total_risk_percent = (total_risk / balance) * 100;
@@ -81,6 +83,21 @@ export async function GET() {
     0,
   );
   const total_target_percent = (total_target / balance) * 100;
+
+
+  const orderResponse = await wooService.getPreviousOrders();
+  const trades = orderResponse.rows
+    .filter(({ realized_pnl }) => realized_pnl !== null)
+    .map((order) => {
+      return {
+        id: order.order_id.toString(),
+        symbol: order.symbol,
+        position_side: order.position_side,
+        quantity: order.quantity,
+        realized_pnl: order.realized_pnl,
+        timestamp: parseFloat(order.updated_time.toString()) * 1000,
+      } as Trade;
+    });
 
   return NextResponse.json({
     starting_balance,
@@ -101,5 +118,6 @@ export async function GET() {
     total_target,
     total_target_percent,
     positions,
-  } as PositionDetail);
+    trades
+  } as AccountDetail);
 }

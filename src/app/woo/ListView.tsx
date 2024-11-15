@@ -1,13 +1,13 @@
 'use client';
 
-import { ParsedTrade } from '@/types';
+import { Trade } from '@/types';
 import { format } from 'date-fns';
 import React, { useMemo } from 'react';
 import { formatTimeAgo } from '@/utils';
 import { cn } from '@/styles';
 
 interface Props {
-  trades: ParsedTrade[];
+  trades: Trade[];
 }
 
 export default function ListView({ trades }: Props): JSX.Element {
@@ -23,7 +23,7 @@ export default function ListView({ trades }: Props): JSX.Element {
       const dateKey = date.getTime();
       map.set(dateKey, [...(map.get(dateKey) || []), trade]);
       return map;
-    }, new Map<number, ParsedTrade[]>());
+    }, new Map<number, Trade[]>());
   }, [trades]);
 
   const sortedDates = Array.from(groupedTrades.keys()).sort((a, b) => b - a);

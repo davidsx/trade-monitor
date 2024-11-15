@@ -13,12 +13,12 @@ import {
 import { cn } from '@/styles';
 import { Weekdays } from '@/constants/date';
 import { useState } from 'react';
-import { ParsedTrade } from '@/types';
+import { Trade } from '@/types';
 import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import { compareDateOnly } from '@/utils';
 import { fromZonedTime } from 'date-fns-tz';
 
-export default function CalendarView({ trades }: { trades: ParsedTrade[] }): JSX.Element {
+export default function CalendarView({ trades }: { trades: Trade[] }): JSX.Element {
   const [month, setMonth] = useState(new Date().getMonth());
   const [year, setYear] = useState(new Date().getFullYear());
 

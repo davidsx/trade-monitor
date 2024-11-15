@@ -1,33 +1,18 @@
 'use client';
 
-import useSWR from 'swr';
 import CalendarView from './CalendarView';
 import ListView from './ListView';
-import { ParsedTrade } from '@/types';
-// import { fromZonedTime } from 'date-fns-tz';
-// import { endOfDay, startOfDay } from 'date-fns';
+import { Trade } from '@/types';
 
-export default function TradeHistory() {
-  const { data: trades = [], isLoading } = useSWR(
-    `/api/woo/trades`,
-    (url) => fetch(url).then((res) => res.json()) as Promise<ParsedTrade[]>,
-  );
+interface Props {
+  trades: Trade[];
+}
 
+export default function TradeHistory({ trades }: Props) {
   if (trades.length === 0) return null;
-  if (isLoading) return <div>Loading trade history...</div>;
 
   const winRate = trades.filter(({ realized_pnl }) => realized_pnl > 0).length / trades.length;
   const avgPnl = trades.reduce((acc, { realized_pnl }) => acc + realized_pnl, 0) / trades.length;
-
-  // const date = new Date();
-  // const dateStart = fromZonedTime(startOfDay(date), 'UTC');
-  // const dateEnd = fromZonedTime(endOfDay(date), 'UTC');
-  // const tradesOnDate = trades.filter(
-  //   (trade) =>
-  //     trade.realized_pnl !== null &&
-  //     trade.timestamp >= dateStart.getTime() &&
-  //     trade.timestamp <= dateEnd.getTime(),
-  // );
 
   const totalLoss = trades.reduce(
     (acc, { realized_pnl }) => (realized_pnl < 0 ? acc + realized_pnl : acc),
