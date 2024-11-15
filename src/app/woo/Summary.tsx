@@ -31,10 +31,9 @@ export default function Summary({ accountDetail }: Props) {
     total_target_percent,
   } = accountDetail;
 
-  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const date = toZonedTime(new Date(), 'UTC');
-  const dateStart = fromZonedTime(startOfDay(date), tz);
-  const dateEnd = fromZonedTime(endOfDay(date), tz);
+  const dateStart = fromZonedTime(startOfDay(date), 'UTC');
+  const dateEnd = fromZonedTime(endOfDay(date), 'UTC');
   const tradesOnDate = accountDetail.trades.filter(
     (trade) =>
       trade.realized_pnl !== null &&
