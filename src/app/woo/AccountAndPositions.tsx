@@ -20,6 +20,7 @@ export default function AccountAndPositions() {
     balance,
     balance_percent,
     equity,
+    equity_percent,
     unrealized,
     realized,
     fee,
@@ -58,18 +59,18 @@ export default function AccountAndPositions() {
           <div className="flex flex-col items-start">
             <div className="text-sm opacity-50">Starting Balance</div>
             <div className="text-xl">{starting_balance.toFixed(2)}</div>
-            <div className="text-sm opacity-50">Target 50%</div>
+            <div className="text-sm opacity-50">Target: {(starting_balance * 1.5).toFixed(2)} (50%)</div>
           </div>
           <div className="flex flex-1 flex-col items-center justify-center">
             <IconArrowRight size={24} />
-            <div className={cn('text-sm', getTextColor(balance_percent))}>
-              ({balance_percent.toFixed(2)}%)
+            <div className={cn('text-sm', getTextColor(equity_percent))}>
+              ({equity_percent.toFixed(2)}%)
             </div>
           </div>
           <div className="flex flex-col items-end">
-            <div className="text-sm opacity-50">Current Balance</div>
-            <div className="text-xl">{balance.toFixed(2)}</div>
-            <div className="text-sm opacity-50">Equity: {equity.toFixed(2)}</div>
+            <div className="text-sm opacity-50">Equity</div>
+            <div className="text-xl">{equity.toFixed(2)}</div>
+            <div className="text-sm opacity-50">Current: {balance.toFixed(2)}</div>
           </div>
         </div>
         {/* Current PnL */}
@@ -77,14 +78,18 @@ export default function AccountAndPositions() {
           <div className="flex w-full items-center">
             <div className="flex flex-1 flex-col items-start">
               <div className="text-sm opacity-50">Realized</div>
-              <div className="text-xl text-red-500">{realized.toFixed(2)}</div>
-              <span className="text-red-500 opacity-80">({realized_percent.toFixed(2)}%)</span>
+              <div className={cn('text-xl', getTextColor(realized))}>{realized.toFixed(2)}</div>
+              <span className={cn('opacity-80', getTextColor(realized))}>
+                ({realized_percent.toFixed(2)}%)
+              </span>
             </div>
             <IconPlus size={16} />
             <div className="flex flex-1 flex-col items-center">
               <div className="text-sm opacity-50">Unrealized</div>
-              <div className="text-xl text-green-500">{unrealized.toFixed(2)}</div>
-              <span className="text-green-500 opacity-80">({unrealized_percent.toFixed(2)}%)</span>
+              <div className={cn('text-xl', getTextColor(unrealized))}>{unrealized.toFixed(2)}</div>
+              <span className={cn('opacity-80', getTextColor(unrealized))}>
+                ({unrealized_percent.toFixed(2)}%)
+              </span>
             </div>
             <IconEqual size={16} />
             <div className="flex flex-1 flex-col items-end">
@@ -117,7 +122,7 @@ export default function AccountAndPositions() {
           </div>
         </div>
         {/* Closed Positions */}
-        <div className="flex w-full items-center rounded-xl border border-zinc-500 p-4">
+        <div className="flex w-full items-center justify-between rounded-xl border border-zinc-500 p-4">
           <div className="flex flex-col items-start">
             <div className="text-sm opacity-50">Daily Loss</div>
             <div className="text-xl text-red-500">{totalLossToday.toFixed(2)}</div>
@@ -125,10 +130,10 @@ export default function AccountAndPositions() {
               ({((totalLossToday / starting_balance) * 100).toFixed(2)}%)
             </span>
           </div>
-          <div className="flex flex-1 flex-col items-center justify-center text-sm">
+          {/* <div className="flex flex-1 flex-col items-center justify-center text-sm">
             <div>Win rate</div>
             <div>{((profitPositions.length || 1) / (closedPositions.length || 1)) * 100}%</div>
-          </div>
+          </div> */}
           <div className="flex flex-col items-end">
             <div className="text-sm opacity-50">Daily Profit</div>
             <div className="text-xl text-green-500">{totalProfitToday.toFixed(2)}</div>

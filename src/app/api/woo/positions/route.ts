@@ -25,6 +25,7 @@ export async function GET() {
   const starting_balance = equity - unrealized - realized + fee;
   const balance = equity - unrealized;
   const balance_percent = ((balance - starting_balance) / starting_balance) * 100;
+  const equity_percent = ((equity - starting_balance) / starting_balance) * 100;
 
   const unrealized_percent = (unrealized / starting_balance) * 100;
   const realized_percent = (realized / starting_balance) * 100;
@@ -86,6 +87,7 @@ export async function GET() {
     balance,
     balance_percent,
     equity,
+    equity_percent,
     unrealized,
     realized,
     fee,
