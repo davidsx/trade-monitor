@@ -9,6 +9,7 @@ interface Props {
 }
 
 export default function Positions({ positions }: Props) {
+  console.log(positions);
   return (
     <section className="flex flex-col gap-2">
       <div className="flex flex-col gap-2">
@@ -82,7 +83,7 @@ export default function Positions({ positions }: Props) {
                           {Math.abs((sl_price - entry_price) * quantity).toFixed(2)})
                         </span>
                       )}
-                      {sl_price && (
+                      {risk_ratio && (
                         <span className="text-xs text-zinc-500">(1:{risk_ratio.toFixed(1)})</span>
                       )}
                     </div>
@@ -90,8 +91,8 @@ export default function Positions({ positions }: Props) {
                 </div>
                 <div className="flex flex-col items-end gap-1">
                   <div className={cn('text-md', getTextColor(unrealized_pnl))}>
-                    {unrealized_pnl.toFixed(2)} (
-                    {Math.abs(unrealized_pnl / ((sl_price - entry_price) * quantity)).toFixed(2)}R)
+                    {unrealized_pnl.toFixed(2)}
+                    {/* ({Math.abs(unrealized_pnl / ((sl_price - entry_price) * quantity)).toFixed(2)}R) */}
                   </div>
                   <div className={cn(getTextColor(pnl - fee), 'text-sm')}>
                     PnL: {(pnl - fee).toFixed(2)}

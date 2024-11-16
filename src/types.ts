@@ -16,12 +16,12 @@ export interface Position {
   quantity: number;
   entry_price: number;
   mark_price: number;
-  tp_price: number;
-  sl_price: number;
   unrealized_pnl: number;
   fee: number;
   pnl: number;
-  risk_ratio: number;
+  tp_price?: number;
+  sl_price?: number;
+  risk_ratio?: number;
 }
 
 export interface AccountDetail {

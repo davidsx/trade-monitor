@@ -48,9 +48,11 @@ export async function GET() {
     const tpPrice = tpOrder?.triggerPrice;
     const slOrder = algoOrders.find((algoOrder) => algoOrder.algoType === 'STOP_LOSS');
     const slPrice = slOrder?.triggerPrice;
-    const riskRatio =
-      Math.abs((tpPrice || averageOpenPrice) - averageOpenPrice) /
-      Math.abs((slPrice || averageOpenPrice) - averageOpenPrice);
+    const risk_ratio =
+      tpPrice && slPrice
+        ? Math.abs((tpPrice || averageOpenPrice) - averageOpenPrice) /
+          Math.abs((slPrice || averageOpenPrice) - averageOpenPrice)
+        : null;
     return {
       symbol,
       position_side: positionSide,
@@ -62,7 +64,7 @@ export async function GET() {
       unrealized_pnl,
       fee: fee24H,
       pnl: pnl24H,
-      risk_ratio: riskRatio,
+      risk_ratio,
     };
   });
 
@@ -83,7 +85,6 @@ export async function GET() {
     0,
   );
   const total_target_percent = (total_target / balance) * 100;
-
 
   const orderResponse = await wooService.getPreviousOrders();
   const trades = orderResponse.rows
@@ -118,6 +119,6 @@ export async function GET() {
     total_target,
     total_target_percent,
     positions,
-    trades
+    trades,
   } as AccountDetail);
 }
