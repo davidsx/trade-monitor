@@ -29,6 +29,7 @@ export default function Summary({ accountDetail }: Props) {
     total_risk_percent,
     total_target,
     total_target_percent,
+    total_risk_ratio,
   } = accountDetail;
 
   const date = toZonedTime(new Date(), 'UTC');
@@ -44,13 +45,15 @@ export default function Summary({ accountDetail }: Props) {
   const lossTrades = tradesOnDate.filter((trade) => trade.realized_pnl < 0);
   const profitTrades = tradesOnDate.filter((trade) => trade.realized_pnl > 0);
   const totalLossToday = lossTrades.reduce((acc, { realized_pnl }) => realized_pnl + acc, 0);
+  const totalLossTodayPercent = (totalLossToday / starting_balance) * 100;
   const totalProfitToday = profitTrades.reduce((acc, { realized_pnl }) => realized_pnl + acc, 0);
+  const totalProfitTodayPercent = (totalProfitToday / starting_balance) * 100;
 
   return (
     <section className="flex h-full flex-col gap-2">
       {/* Balance */}
       <div className="flex w-full items-center rounded-xl border border-zinc-500 p-4">
-        <div className="flex flex-col items-start flex-1">
+        <div className="flex flex-1 flex-col items-start">
           <div className="text-sm opacity-50">Starting Balance</div>
           <div className="text-xl">{starting_balance.toFixed(2)}</div>
           <div className="text-sm opacity-50">
@@ -63,7 +66,7 @@ export default function Summary({ accountDetail }: Props) {
             ({equity_percent.toFixed(2)}%)
           </div>
         </div>
-        <div className="flex flex-col items-end flex-1">
+        <div className="flex flex-1 flex-col items-end">
           <div className="text-sm opacity-50">Equity</div>
           <div className="text-xl">{equity.toFixed(2)}</div>
           <div className="text-sm opacity-50">Current: {balance.toFixed(2)}</div>
@@ -96,7 +99,7 @@ export default function Summary({ accountDetail }: Props) {
             </span>
           </div>
         </div>
-        <div className="text-md w-full text-center text-right opacity-50">
+        <div className="w-full text-center text-right text-md opacity-50">
           Fee: -{fee.toFixed(2)} (-{fee_percent.toFixed(2)}%)
         </div>
       </div>
@@ -104,12 +107,14 @@ export default function Summary({ accountDetail }: Props) {
       <div className="flex w-full items-center rounded-xl border border-zinc-500 p-4">
         <div className="flex flex-col items-start">
           <div className="text-sm opacity-50">Expected Loss</div>
-          <div className="text-xl text-red-500">{total_risk.toFixed(2)}</div>
-          <span className="text-red-500 opacity-80">({total_risk_percent.toFixed(2)}%)</span>
+          <div className={cn('text-xl', getTextColor(total_risk))}>{total_risk.toFixed(2)}</div>
+          <span className={cn('opacity-80', getTextColor(total_risk))}>
+            ({total_risk_percent.toFixed(2)}%)
+          </span>
         </div>
         <div className="flex flex-1 flex-col items-center justify-center text-sm">
           <div>Risk ratio</div>
-          <div>1 : {(total_target / total_risk).toFixed(2)}</div>
+          <div>1 : {total_risk_ratio.toFixed(2)}</div>
         </div>
         <div className="flex flex-col items-end">
           <div className="text-sm opacity-50">Expected Profit</div>
@@ -122,9 +127,7 @@ export default function Summary({ accountDetail }: Props) {
         <div className="flex flex-col items-start">
           <div className="text-sm opacity-50">Daily Loss</div>
           <div className="text-xl text-red-500">{totalLossToday.toFixed(2)}</div>
-          <span className="text-red-500 opacity-80">
-            ({((totalLossToday / starting_balance) * 100).toFixed(2)}%)
-          </span>
+          <span className="text-red-500 opacity-80">({totalLossTodayPercent.toFixed(2)}%)</span>
         </div>
         {/* <div className="flex flex-1 flex-col items-center justify-center text-sm">
           <div>Win rate</div>
@@ -133,9 +136,7 @@ export default function Summary({ accountDetail }: Props) {
         <div className="flex flex-col items-end">
           <div className="text-sm opacity-50">Daily Profit</div>
           <div className="text-xl text-green-500">{totalProfitToday.toFixed(2)}</div>
-          <span className="text-green-500 opacity-80">
-            ({((totalProfitToday / starting_balance) * 100).toFixed(2)}%)
-          </span>
+          <span className="text-green-500 opacity-80">({totalProfitTodayPercent.toFixed(2)}%)</span>
         </div>
       </div>
     </section>

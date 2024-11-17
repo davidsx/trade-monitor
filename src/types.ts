@@ -42,6 +42,7 @@ export interface AccountDetail {
   total_risk_percent: number;
   total_target: number;
   total_target_percent: number;
+  total_risk_ratio: number;
   positions: Position[];
   trades: Trade[];
 }

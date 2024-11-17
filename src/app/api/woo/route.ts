@@ -76,7 +76,7 @@ export async function GET() {
         : 0),
     0,
   );
-  const total_risk_percent = (total_risk / balance) * 100;
+  const total_risk_percent = (total_risk / starting_balance) * 100;
 
   const total_target = positions.reduce(
     (acc, { tp_price, entry_price, quantity }) =>
@@ -84,7 +84,9 @@ export async function GET() {
       (entry_price && tp_price && quantity ? Math.abs((tp_price - entry_price) * quantity) : 0),
     0,
   );
-  const total_target_percent = (total_target / balance) * 100;
+  const total_target_percent = (total_target / starting_balance) * 100;
+
+  const total_risk_ratio = Math.abs(total_target / total_risk);
 
   const orderResponse = await wooService.getPreviousOrders();
   const trades = orderResponse.rows
@@ -118,6 +120,7 @@ export async function GET() {
     total_risk_percent,
     total_target,
     total_target_percent,
+    total_risk_ratio,
     positions,
     trades,
   } as AccountDetail);
