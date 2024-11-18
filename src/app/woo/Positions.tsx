@@ -9,7 +9,6 @@ interface Props {
 }
 
 export default function Positions({ positions }: Props) {
-  console.log(positions);
   return (
     <section className="flex flex-col gap-2">
       <div className="flex flex-col gap-2">

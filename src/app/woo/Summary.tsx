@@ -52,24 +52,29 @@ export default function Summary({ accountDetail }: Props) {
   return (
     <section className="flex h-full flex-col gap-2">
       {/* Balance */}
-      <div className="flex w-full items-center rounded-xl border border-zinc-500 p-4">
+      <div
+        className={cn(
+          'flex w-full items-center rounded-xl border border-zinc-500 p-4',
+          balance_percent > 50 && 'border-4 border-green-500',
+          balance_percent < -25 && 'border-4 border-red-500',
+        )}
+      >
         <div className="flex flex-1 flex-col items-start">
           <div className="text-sm opacity-50">Starting Balance</div>
           <div className="text-xl">{starting_balance.toFixed(2)}</div>
-          <div className="text-sm opacity-50">
-            Target: {(starting_balance * 1.5).toFixed(2)} (50%)
-          </div>
+          <div className="text-sm opacity-50">Target: {(starting_balance * 1.5).toFixed(2)}</div>
+          <div className="text-sm opacity-50">(50%)</div>
         </div>
-        <div className="flex flex-1 flex-col items-center justify-center">
+        <div className="flex flex-col items-center justify-center">
           <IconArrowRight size={24} />
-          <div className={cn('text-sm', getTextColor(equity_percent))}>
-            ({equity_percent.toFixed(2)}%)
-          </div>
         </div>
         <div className="flex flex-1 flex-col items-end">
           <div className="text-sm opacity-50">Equity</div>
           <div className="text-xl">{equity.toFixed(2)}</div>
-          <div className="text-sm opacity-50">Current: {balance.toFixed(2)}</div>
+          <div className="whitespace-nowrap text-sm opacity-50">Current: {balance.toFixed(2)}</div>
+          <div className="whitespace-nowrap text-sm opacity-50">
+            ({balance_percent.toFixed(2)}%)
+          </div>
         </div>
       </div>
       {/* Current PnL */}
@@ -105,21 +110,25 @@ export default function Summary({ accountDetail }: Props) {
       </div>
       {/* Expected Profit and Loss */}
       <div className="flex w-full items-center rounded-xl border border-zinc-500 p-4">
-        <div className="flex flex-col items-start">
+        <div className="flex flex-1 flex-col items-start">
           <div className="text-sm opacity-50">Expected Loss</div>
           <div className={cn('text-xl', getTextColor(total_risk))}>{total_risk.toFixed(2)}</div>
           <span className={cn('opacity-80', getTextColor(total_risk))}>
             ({total_risk_percent.toFixed(2)}%)
           </span>
         </div>
-        <div className="flex flex-1 flex-col items-center justify-center text-sm">
-          <div>Risk ratio</div>
-          <div>1 : {total_risk_ratio.toFixed(2)}</div>
-        </div>
-        <div className="flex flex-col items-end">
+        {total_risk_ratio && (
+          <div className="flex flex-1 flex-col items-center justify-center text-sm">
+            <div>Risk ratio</div>
+            <div>1 : {total_risk_ratio.toFixed(2)}</div>
+          </div>
+        )}
+        <div className="flex flex-1 flex-col items-end">
           <div className="text-sm opacity-50">Expected Profit</div>
-          <div className="text-xl text-green-500">{total_target.toFixed(2)}</div>
-          <span className="text-green-500 opacity-80">({total_target_percent.toFixed(2)}%)</span>
+          <div className={cn('text-xl', getTextColor(total_target))}>{total_target.toFixed(2)}</div>
+          <span className={cn('opacity-80', getTextColor(total_target))}>
+            ({total_target_percent.toFixed(2)}%)
+          </span>
         </div>
       </div>
       {/* Closed Positions */}
