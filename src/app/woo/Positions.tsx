@@ -36,6 +36,8 @@ export default function Positions({ positions }: Props) {
                   "after:absolute after:left-0 after:top-0 after:h-full after:w-2 after:rounded-bl-xl after:rounded-tl-xl after:bg-zinc-500 after:content-['']",
                   unrealized_pnl > 0 && 'after:bg-green-500',
                   unrealized_pnl < 0 && 'after:bg-red-500',
+                  !tp_price && 'bg-green-500 bg-opacity-10',
+                  !sl_price && 'bg-red-500 bg-opacity-10',
                 )}
                 key={`${symbol}-${position_side}`}
               >
@@ -46,7 +48,7 @@ export default function Positions({ positions }: Props) {
                   <div className="flex items-center gap-1">
                     <span
                       className={cn(
-                        'text-2xs w-min rounded-md px-1 py-0.5 text-center text-white',
+                        'w-min rounded-md px-1 py-0.5 text-center text-2xs text-white',
                         position_side === 'LONG' && 'bg-teal-500 bg-opacity-20 text-green-500',
                         position_side === 'SHORT' && 'bg-red-500 bg-opacity-20 text-red-500',
                       )}
@@ -61,17 +63,21 @@ export default function Positions({ positions }: Props) {
                     Mark price: {mark_price.toFixed(2)}
                   </div>
                   {entry_price > 0 && (
-                    <div className="flex flex-col opacity-60">
-                      {tp_price && (
-                        <span className="text-xs text-green-500">
+                    <div className="flex flex-col">
+                      {tp_price ? (
+                        <span className="text-xs text-green-500 opacity-60">
                           TP: {tp_price.toFixed(2)} (
                           {Math.abs((tp_price - entry_price) * quantity).toFixed(2)})
                         </span>
+                      ) : (
+                        <span className="text-xs font-semibold text-green-500">
+                          NO TAKE PROFIT!!!
+                        </span>
                       )}
-                      {sl_price && (
+                      {sl_price ? (
                         <span
                           className={cn(
-                            'text-xs',
+                            'text-xs opacity-60',
                             (position_side === 'LONG' && sl_price > entry_price) ||
                               (position_side === 'SHORT' && sl_price < entry_price)
                               ? 'text-green-500'
@@ -81,9 +87,13 @@ export default function Positions({ positions }: Props) {
                           SL: {sl_price.toFixed(2)} (
                           {Math.abs((sl_price - entry_price) * quantity).toFixed(2)})
                         </span>
+                      ) : (
+                        <span className="text-xs font-semibold text-red-500">NO STOP LOSS!!!</span>
                       )}
                       {risk_ratio && (
-                        <span className="text-xs text-zinc-500">(1:{risk_ratio.toFixed(1)})</span>
+                        <span className="text-xs text-zinc-500 opacity-60">
+                          (1:{risk_ratio.toFixed(1)})
+                        </span>
                       )}
                     </div>
                   )}
@@ -128,7 +138,7 @@ export default function Positions({ positions }: Props) {
                     </span>
                     <div
                       className={cn(
-                        'text-2xs w-min rounded-md px-1 py-0.5 text-center text-white',
+                        'w-min rounded-md px-1 py-0.5 text-center text-2xs text-white',
                         position_side === 'LONG' && 'bg-teal-500 bg-opacity-20 text-green-500',
                         position_side === 'SHORT' && 'bg-red-500 bg-opacity-20 text-red-500',
                       )}
