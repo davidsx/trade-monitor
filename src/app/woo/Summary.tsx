@@ -67,6 +67,7 @@ export default function Summary({ accountDetail }: Props) {
         </div>
         <div className="flex flex-col items-center justify-center">
           <IconArrowRight size={24} />
+          <div className="text-sm opacity-50">({equity_percent.toFixed(2)}%)</div>
         </div>
         <div className="flex flex-1 flex-col items-end">
           <div className="text-sm opacity-50">Equity</div>
