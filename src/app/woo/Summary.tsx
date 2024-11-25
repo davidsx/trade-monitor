@@ -55,8 +55,8 @@ export default function Summary({ accountDetail }: Props) {
       <div
         className={cn(
           'flex w-full items-center rounded-xl border border-zinc-500 p-4',
-          balance_percent > 50 && 'border-4 border-green-500',
-          balance_percent < -25 && 'border-4 border-red-500',
+          balance_percent > 20 && 'border-4 border-green-500',
+          balance_percent < -10 && 'border-4 border-red-500',
         )}
       >
         <div className="flex flex-1 flex-col items-start">
