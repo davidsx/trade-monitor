@@ -26,7 +26,7 @@ export default function Page(): JSX.Element {
     <div className="flex justify-center">
       <div className="flex min-h-screen w-full max-w-[480px] flex-col gap-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between w-full">
             <h1 className="text-4xl">WOO X</h1>
             {isLoading && (
               <div className="animate-spin">

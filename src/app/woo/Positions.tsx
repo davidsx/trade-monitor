@@ -3,14 +3,24 @@
 import { cn } from '@/styles';
 import { AccountDetail, Position } from '@/types';
 import { getTextColor } from '@/utils';
+import { useState } from 'react';
 
 interface Props {
   positions: Position[];
 }
 
 export default function Positions({ positions }: Props) {
+  const [showDetail, setShowDetail] = useState(false);
   return (
     <section className="flex flex-col gap-2">
+      <h2 className="flex w-full items-center justify-between text-sm">
+        Positions
+        <div>
+          <button onClick={() => setShowDetail(!showDetail)}>
+            {showDetail ? 'Hide' : 'Show'} Detail
+          </button>
+        </div>
+      </h2>
       <div className="flex flex-col gap-2">
         {positions
           .filter((position) => position.unrealized_pnl !== 0 && position.quantity !== 0)
@@ -41,7 +51,7 @@ export default function Positions({ positions }: Props) {
                 )}
                 key={`${symbol}-${position_side}`}
               >
-                <div className="flex flex-1 flex-col gap-1">
+                <div className={cn('flex flex-1 gap-1', showDetail && 'flex-col')}>
                   <span className="whitespace-nowrap">
                     {symbol.replace('PERP_', '').replace('_USDT', '')}-PERP
                   </span>
@@ -59,43 +69,49 @@ export default function Positions({ positions }: Props) {
                       {quantity.toFixed(2)} @ {entry_price.toFixed(2)}
                     </span>
                   </div>
-                  <div className="flex justify-between text-sm text-xs text-zinc-500 opacity-80">
-                    Mark price: {mark_price.toFixed(2)}
-                  </div>
-                  {entry_price > 0 && (
-                    <div className="flex flex-col">
-                      {tp_price ? (
-                        <span className="text-xs text-green-500 opacity-60">
-                          TP: {tp_price.toFixed(2)} (
-                          {Math.abs((tp_price - entry_price) * quantity).toFixed(2)})
-                        </span>
-                      ) : (
-                        <span className="text-xs font-semibold text-green-500">
-                          NO TAKE PROFIT!!!
-                        </span>
-                      )}
-                      {sl_price ? (
-                        <span
-                          className={cn(
-                            'text-xs opacity-60',
-                            (position_side === 'LONG' && sl_price > entry_price) ||
-                              (position_side === 'SHORT' && sl_price < entry_price)
-                              ? 'text-green-500'
-                              : 'text-red-500',
+                  {showDetail && (
+                    <>
+                      <div className="flex justify-between text-sm text-xs text-zinc-500 opacity-80">
+                        Mark price: {mark_price.toFixed(2)}
+                      </div>
+                      {entry_price > 0 && (
+                        <div className="flex flex-col">
+                          {tp_price ? (
+                            <span className="text-xs text-green-500 opacity-60">
+                              TP: {tp_price.toFixed(2)} (
+                              {Math.abs((tp_price - entry_price) * quantity).toFixed(2)})
+                            </span>
+                          ) : (
+                            <span className="text-xs font-semibold text-green-500">
+                              NO TAKE PROFIT!!!
+                            </span>
                           )}
-                        >
-                          SL: {sl_price.toFixed(2)} (
-                          {Math.abs((sl_price - entry_price) * quantity).toFixed(2)})
-                        </span>
-                      ) : (
-                        <span className="text-xs font-semibold text-red-500">NO STOP LOSS!!!</span>
+                          {sl_price ? (
+                            <span
+                              className={cn(
+                                'text-xs opacity-60',
+                                (position_side === 'LONG' && sl_price > entry_price) ||
+                                  (position_side === 'SHORT' && sl_price < entry_price)
+                                  ? 'text-green-500'
+                                  : 'text-red-500',
+                              )}
+                            >
+                              SL: {sl_price.toFixed(2)} (
+                              {Math.abs((sl_price - entry_price) * quantity).toFixed(2)})
+                            </span>
+                          ) : (
+                            <span className="text-xs font-semibold text-red-500">
+                              NO STOP LOSS!!!
+                            </span>
+                          )}
+                          {risk_ratio && (
+                            <span className="text-xs text-zinc-500 opacity-60">
+                              (1:{risk_ratio.toFixed(1)})
+                            </span>
+                          )}
+                        </div>
                       )}
-                      {risk_ratio && (
-                        <span className="text-xs text-zinc-500 opacity-60">
-                          (1:{risk_ratio.toFixed(1)})
-                        </span>
-                      )}
-                    </div>
+                    </>
                   )}
                 </div>
                 <div className="flex flex-col items-end gap-1">
@@ -103,14 +119,18 @@ export default function Positions({ positions }: Props) {
                     {unrealized_pnl.toFixed(2)}
                     {/* ({Math.abs(unrealized_pnl / ((sl_price - entry_price) * quantity)).toFixed(2)}R) */}
                   </div>
-                  <div className={cn(getTextColor(pnl - fee), 'text-sm')}>
-                    PnL: {(pnl - fee).toFixed(2)}
-                  </div>
-                  <div className="text-sm text-zinc-500">Fee paid: {fee.toFixed(2)}</div>
-                  {pnl !== 0 && (
-                    <div className={cn(getTextColor(pnl), 'text-xs opacity-40')}>
-                      PnL before fee: {pnl.toFixed(2)}
-                    </div>
+                  {showDetail && (
+                    <>
+                      <div className={cn(getTextColor(pnl - fee), 'text-sm')}>
+                        PnL: {(pnl - fee).toFixed(2)}
+                      </div>
+                      <div className="text-sm text-zinc-500">Fee paid: {fee.toFixed(2)}</div>
+                      {pnl !== 0 && (
+                        <div className={cn(getTextColor(pnl), 'text-xs opacity-40')}>
+                          PnL before fee: {pnl.toFixed(2)}
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
@@ -120,6 +140,7 @@ export default function Positions({ positions }: Props) {
       <div className="grid grid-cols-2 gap-2">
         {positions
           .filter((position) => position.pnl !== 0)
+          .sort((a, b) => a.pnl - b.pnl)
           .map((position) => {
             const { symbol, position_side, fee, pnl } = position;
             return (

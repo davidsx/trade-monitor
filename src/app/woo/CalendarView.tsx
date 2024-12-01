@@ -58,7 +58,7 @@ export default function CalendarView({ trades }: { trades: Trade[] }): JSX.Eleme
           <IconChevronLeft />
         </button> */}
         <div className="flex flex-row items-center justify-between w-full">
-          <span className="text-xl" suppressHydrationWarning>
+          <span className="text-sm" suppressHydrationWarning>
             {format(calendarDate, 'yyyy MMMM')}
           </span>
           <span className="text-sm uppercase">{trades.length || 'No'} Trades</span>
