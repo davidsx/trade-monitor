@@ -55,9 +55,9 @@ export default function Summary({ accountDetail }: Props) {
       <div
         className={cn(
           'flex w-full flex-col items-center gap-4 rounded-xl border border-zinc-500 p-4',
-          balance_percent > 20 && 'border-4 border-green-500',
-          balance_percent > 40 && 'bg-green-500 bg-opacity-20',
-          balance_percent < -10 && 'border-4 border-red-500',
+          equity_percent > 20 && 'border-4 border-green-500',
+          equity_percent > 40 && 'bg-green-500 bg-opacity-20',
+          equity_percent < -10 && 'border-4 border-red-500',
         )}
       >
         <div className="flex w-full items-center">
@@ -82,12 +82,12 @@ export default function Summary({ accountDetail }: Props) {
             </div>
           </div>
         </div>
-        {balance_percent > 20 && (
+        {equity_percent > 20 && (
           <div className="flex flex-col items-center text-green-500">
             <span className="text-xl uppercase">
               Take profit now 🚀 ({balance_percent.toFixed(2)}%)
             </span>
-            {balance_percent > 40 && (
+            {equity_percent > 40 && (
               <span className="text-lg opacity-80">At least check the chart</span>
             )}
           </div>
