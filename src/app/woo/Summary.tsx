@@ -84,11 +84,11 @@ export default function Summary({ accountDetail }: Props) {
         </div>
         {equity_percent > 20 && (
           <div className="flex flex-col items-center text-green-500">
-            <span className="text-xl uppercase">
-              Take profit now 🚀 ({balance_percent.toFixed(2)}%)
+            <span className="text-md uppercase">
+              Take profit now 🚀 ({equity_percent.toFixed(2)}%)
             </span>
             {equity_percent > 40 && (
-              <span className="text-lg opacity-80">At least check the chart</span>
+              <span className="text-sm opacity-80">At least check the chart</span>
             )}
           </div>
         )}
