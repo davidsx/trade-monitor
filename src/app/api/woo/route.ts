@@ -34,9 +34,6 @@ export async function GET() {
   const pnl_percent = (pnl / starting_balance) * 100;
   const fee_percent = (fee / starting_balance) * 100;
 
-  const per_position_unrealized = unrealized / positionResponse.data.positions.length;
-  const per_position_unrealized_percent = (per_position_unrealized / starting_balance) * 100;
-
   const positions = positionResponse.data.positions.map((position) => {
     const { symbol, fee24H, pnl24H, positionSide, averageOpenPrice, markPrice, holding } = position;
     const unrealized_pnl = (markPrice - averageOpenPrice) * holding;
@@ -70,6 +67,11 @@ export async function GET() {
       risk_ratio,
     };
   });
+
+  const per_position_unrealized =
+    unrealized /
+    positions.filter((position) => position.unrealized_pnl !== 0 && position.quantity !== 0).length;
+  const per_position_unrealized_percent = (per_position_unrealized / starting_balance) * 100;
 
   const total_risk = positions.reduce(
     (acc, { sl_price, entry_price, quantity, position_side }) =>
