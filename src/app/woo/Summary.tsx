@@ -120,8 +120,11 @@ export default function Summary({ accountDetail }: Props) {
             </span>
           </div>
         </div>
-        <div className="w-full text-center text-right text-md opacity-50">
-          Fee: -{fee.toFixed(2)} (-{fee_percent.toFixed(2)}%)
+        <div className="flex w-full items-center justify-between whitespace-nowrap text-sm opacity-50">
+          <span>Per position: {(unrealized / accountDetail.positions.length).toFixed(2)}</span>
+          <span>
+            Fee: -{fee.toFixed(2)} (-{fee_percent.toFixed(2)}%)
+          </span>
         </div>
       </div>
       {/* Expected Profit and Loss */}
@@ -129,7 +132,7 @@ export default function Summary({ accountDetail }: Props) {
         <div className="flex flex-1 flex-col items-start">
           <div className="text-sm opacity-50">Expected Loss</div>
           <div className={cn('text-xl', getTextColor(total_risk))}>{total_risk.toFixed(2)}</div>
-          <span className={cn('opacity-80 whitespace-nowrap text-xs', getTextColor(total_risk))}>
+          <span className={cn('whitespace-nowrap text-xs opacity-80', getTextColor(total_risk))}>
             ({total_risk_percent.toFixed(2)}%) {(balance + total_risk).toFixed(2)}
           </span>
         </div>
@@ -142,7 +145,7 @@ export default function Summary({ accountDetail }: Props) {
         <div className="flex flex-1 flex-col items-end">
           <div className="text-sm opacity-50">Expected Profit</div>
           <div className={cn('text-xl', getTextColor(total_target))}>{total_target.toFixed(2)}</div>
-          <span className={cn('opacity-80 whitespace-nowrap text-xs', getTextColor(total_target))}>
+          <span className={cn('whitespace-nowrap text-xs opacity-80', getTextColor(total_target))}>
             {(balance + total_target).toFixed(2)} ({total_target_percent.toFixed(2)}%)
           </span>
         </div>
