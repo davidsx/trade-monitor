@@ -133,8 +133,12 @@ export default function Summary({ accountDetail }: Props) {
         </div>
         <div className="flex w-full items-center justify-between whitespace-nowrap text-xs opacity-50">
           <div className="flex flex-col items-start">
-            <span>Per position: {per_position_unrealized.toFixed(2)}</span>
-            <span>({per_position_unrealized_percent.toFixed(2)}%)</span>
+            {per_position_unrealized && (
+              <span>Per position: {per_position_unrealized.toFixed(2)}</span>
+            )}
+            {per_position_unrealized_percent && (
+              <span>({per_position_unrealized_percent.toFixed(2)}%)</span>
+            )}
           </div>
           <div className="flex flex-col items-end">
             <span>Fee: -{fee.toFixed(2)}</span>
