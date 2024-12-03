@@ -131,14 +131,15 @@ export default function Summary({ accountDetail }: Props) {
             </span>
           </div>
         </div>
-        <div className="flex w-full items-center justify-between whitespace-nowrap text-sm opacity-50">
-          <span>
-            Per position: {per_position_unrealized.toFixed(2)} (
-            {per_position_unrealized_percent.toFixed(2)}%)
-          </span>
-          <span>
-            Fee: -{fee.toFixed(2)} (-{fee_percent.toFixed(2)}%)
-          </span>
+        <div className="flex w-full items-center justify-between whitespace-nowrap text-xs opacity-50">
+          <div className="flex flex-col items-start">
+            <span>Per position: {per_position_unrealized.toFixed(2)}</span>
+            <span>({per_position_unrealized_percent.toFixed(2)}%)</span>
+          </div>
+          <div className="flex flex-col items-end">
+            <span>Fee: -{fee.toFixed(2)}</span>
+            <span>(-{fee_percent.toFixed(2)}%)</span>
+          </div>
         </div>
       </div>
       {/* Expected Profit and Loss */}
@@ -169,16 +170,20 @@ export default function Summary({ accountDetail }: Props) {
         <div className="flex flex-col items-start">
           <div className="text-sm opacity-50">Daily Loss</div>
           <div className="text-xl text-red-500">{totalLossToday.toFixed(2)}</div>
-          <span className="text-red-500 opacity-80">({totalLossTodayPercent.toFixed(2)}%)</span>
+          <span className="text-xs text-red-500 opacity-80">
+            ({totalLossTodayPercent.toFixed(2)}%)
+          </span>
         </div>
-        {/* <div className="flex flex-1 flex-col items-center justify-center text-sm">
-          <div>Win rate</div>
-          <div>{((profitPositions.length || 1) / (closedPositions.length || 1)) * 100}%</div>
-        </div> */}
+        <div className="flex flex-1 flex-col items-center justify-center text-sm">
+          <div>Win rate: {((profitTrades.length || 1) / (lossTrades.length || 1)) * 100}%</div>
+          <div>avg: {(pnl / tradesOnDate.length).toFixed(2)}</div>
+        </div>
         <div className="flex flex-col items-end">
           <div className="text-sm opacity-50">Daily Profit</div>
           <div className="text-xl text-green-500">{totalProfitToday.toFixed(2)}</div>
-          <span className="text-green-500 opacity-80">({totalProfitTodayPercent.toFixed(2)}%)</span>
+          <span className="text-xs text-green-500 opacity-80">
+            ({totalProfitTodayPercent.toFixed(2)}%)
+          </span>
         </div>
       </div>
     </section>

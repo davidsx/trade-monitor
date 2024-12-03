@@ -11,7 +11,7 @@ interface Props {
 export default function TradeHistory({ trades }: Props) {
   if (trades.length === 0) return null;
 
-  const winRate = trades.filter(({ realized_pnl }) => realized_pnl > 0).length / trades.length;
+  const winRate = trades.filter(({ realized_pnl }) => realized_pnl > 0).length / trades.length * 100;
   const avgPnl = trades.reduce((acc, { realized_pnl }) => acc + realized_pnl, 0) / trades.length;
 
   const totalLoss = trades.reduce(
@@ -31,7 +31,7 @@ export default function TradeHistory({ trades }: Props) {
       </div>
       <div className="flex justify-between text-sm text-zinc-500">
         <div className="flex flex-col items-start">
-          <div>Win rate: {winRate.toFixed(2)}</div>
+          <div>Win rate: {winRate.toFixed(2)}%</div>
           <div>Avg PnL: {avgPnl.toFixed(2)}</div>
         </div>
         <div className="flex flex-col items-end">
