@@ -1,7 +1,7 @@
 import { cn } from '@/styles';
 import { AccountDetail } from '@/types';
 import { getTextColor } from '@/utils';
-import { IconArrowRight, IconEqual } from '@tabler/icons-react';
+import { IconArrowRight, IconEqual, IconPlus } from '@tabler/icons-react';
 import { startOfDay } from 'date-fns';
 import { endOfDay } from 'date-fns';
 import { fromZonedTime, toZonedTime } from 'date-fns-tz';
@@ -18,13 +18,15 @@ export default function Summary({ accountDetail }: Props) {
     equity,
     equity_percent,
     unrealized,
-    realized,
-    fee,
     unrealized_percent,
+    realized,
     realized_percent,
     pnl,
     pnl_percent,
+    fee,
     fee_percent,
+    per_position_unrealized,
+    per_position_unrealized_percent,
     total_risk,
     total_risk_percent,
     total_target,
@@ -51,6 +53,14 @@ export default function Summary({ accountDetail }: Props) {
 
   return (
     <section className="flex h-full flex-col gap-2">
+      <h2 className="flex w-full items-center justify-between text-sm">
+        Summary
+        {/* <div>
+          <button onClick={() => setShowDetail(!showDetail)}>
+            {showDetail ? <IconList size={16} /> : <IconLayoutList size={16} />}
+          </button>
+        </div> */}
+      </h2>
       {/* Balance */}
       <div
         className={cn(
@@ -58,6 +68,7 @@ export default function Summary({ accountDetail }: Props) {
           equity_percent > 20 && 'border-4 border-green-500',
           equity_percent > 40 && 'bg-green-500 bg-opacity-20',
           equity_percent < -10 && 'border-4 border-red-500',
+          equity_percent < -20 && 'bg-red-500 bg-opacity-20',
         )}
       >
         <div className="flex w-full items-center">
@@ -103,7 +114,7 @@ export default function Summary({ accountDetail }: Props) {
               ({realized_percent.toFixed(2)}%)
             </span>
           </div>
-          <IconArrowRight size={16} />
+          <IconPlus size={16} />
           <div className="flex flex-1 flex-col items-center">
             <div className="text-sm opacity-50">Unrealized</div>
             <div className={cn('text-xl', getTextColor(unrealized))}>{unrealized.toFixed(2)}</div>
@@ -121,7 +132,10 @@ export default function Summary({ accountDetail }: Props) {
           </div>
         </div>
         <div className="flex w-full items-center justify-between whitespace-nowrap text-sm opacity-50">
-          <span>Per position: {(unrealized / accountDetail.positions.length).toFixed(2)}</span>
+          <span>
+            Per position: {per_position_unrealized.toFixed(2)} (
+            {per_position_unrealized_percent.toFixed(2)}%)
+          </span>
           <span>
             Fee: -{fee.toFixed(2)} (-{fee_percent.toFixed(2)}%)
           </span>

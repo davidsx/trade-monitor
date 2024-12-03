@@ -34,6 +34,9 @@ export async function GET() {
   const pnl_percent = (pnl / starting_balance) * 100;
   const fee_percent = (fee / starting_balance) * 100;
 
+  const per_position_unrealized = unrealized / positionResponse.data.positions.length;
+  const per_position_unrealized_percent = (per_position_unrealized / starting_balance) * 100;
+
   const positions = positionResponse.data.positions.map((position) => {
     const { symbol, fee24H, pnl24H, positionSide, averageOpenPrice, markPrice, holding } = position;
     const unrealized_pnl = (markPrice - averageOpenPrice) * holding;
@@ -109,13 +112,15 @@ export async function GET() {
     equity,
     equity_percent,
     unrealized,
-    realized,
-    fee,
     unrealized_percent,
+    realized,
     realized_percent,
+    fee,
+    fee_percent,
     pnl,
     pnl_percent,
-    fee_percent,
+    per_position_unrealized,
+    per_position_unrealized_percent,
     total_risk,
     total_risk_percent,
     total_target,

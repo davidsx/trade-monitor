@@ -31,13 +31,15 @@ export interface AccountDetail {
   equity: number;
   equity_percent: number;
   unrealized: number;
-  realized: number;
-  fee: number;
   unrealized_percent: number;
+  realized: number;
   realized_percent: number;
+  fee: number;
+  fee_percent: number;
   pnl: number;
   pnl_percent: number;
-  fee_percent: number;
+  per_position_unrealized: number;
+  per_position_unrealized_percent: number;
   total_risk: number;
   total_risk_percent: number;
   total_target: number;
