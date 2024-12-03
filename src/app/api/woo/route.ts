@@ -77,7 +77,7 @@ export async function GET() {
     (acc, { sl_price, entry_price, quantity, position_side }) =>
       acc +
       (entry_price && sl_price && quantity
-        ? (position_side === 'LONG' ? sl_price - entry_price : entry_price - sl_price) * quantity
+        ? (position_side === 'LONG' ? sl_price - entry_price : entry_price - sl_price) * Math.abs(quantity)
         : 0),
     0,
   );
@@ -86,7 +86,7 @@ export async function GET() {
   const total_target = positions.reduce(
     (acc, { tp_price, entry_price, quantity }) =>
       acc +
-      (entry_price && tp_price && quantity ? Math.abs((tp_price - entry_price) * quantity) : 0),
+      (entry_price && tp_price && quantity ? Math.abs((tp_price - entry_price) * Math.abs(quantity)) : 0),
     0,
   );
   const total_target_percent = (total_target / starting_balance) * 100;

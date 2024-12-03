@@ -68,7 +68,7 @@ export default function Positions({ positions }: Props) {
                       {position_side}
                     </span>
                     <span className="whitespace-nowrap text-xs">
-                      {quantity.toFixed(2)} @ {entry_price.toFixed(2)}
+                      {Math.abs(quantity).toFixed(2)} @ {entry_price.toFixed(2)}
                     </span>
                   </div>
                   {showDetail && (
