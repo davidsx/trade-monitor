@@ -175,8 +175,11 @@ export default function Summary({ accountDetail }: Props) {
           </span>
         </div>
         <div className="flex flex-1 flex-col items-center justify-center text-sm">
-          <div>Win rate: {((profitTrades.length || 1) / (lossTrades.length || 1)) * 100}%</div>
-          <div>avg: {(pnl / tradesOnDate.length).toFixed(2)}</div>
+          <span>
+            Win rate: {(((profitTrades.length || 1) / (lossTrades.length || 1)) * 100).toFixed(2)}%
+          </span>
+          <span>avg: {(pnl / tradesOnDate.length).toFixed(2)}</span>
+          <span>count: {tradesOnDate.length}</span>
         </div>
         <div className="flex flex-col items-end">
           <div className="text-sm opacity-50">Daily Profit</div>
