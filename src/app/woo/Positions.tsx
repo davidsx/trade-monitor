@@ -3,6 +3,8 @@
 import { cn } from '@/styles';
 import { AccountDetail, Position } from '@/types';
 import { getTextColor } from '@/utils';
+import { IconList } from '@tabler/icons-react';
+import { IconLayoutList } from '@tabler/icons-react';
 import { useState } from 'react';
 
 interface Props {
@@ -17,7 +19,7 @@ export default function Positions({ positions }: Props) {
         Positions
         <div>
           <button onClick={() => setShowDetail(!showDetail)}>
-            {showDetail ? 'Hide' : 'Show'} Detail
+            {showDetail ? <IconList size={16} /> : <IconLayoutList size={16} />}
           </button>
         </div>
       </h2>
