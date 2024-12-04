@@ -51,6 +51,13 @@ export default function Summary({ accountDetail }: Props) {
   const totalProfitToday = profitTrades.reduce((acc, { realized_pnl }) => realized_pnl + acc, 0);
   const totalProfitTodayPercent = (totalProfitToday / starting_balance) * 100;
 
+  const winRate =
+    profitTrades.length === 0
+      ? -1
+      : lossTrades.length === 0
+        ? 1
+        : (profitTrades.length / lossTrades.length) * 100;
+
   return (
     <section className="flex h-full flex-col gap-2">
       <h2 className="flex w-full items-center justify-between text-sm">
@@ -179,9 +186,7 @@ export default function Summary({ accountDetail }: Props) {
           </span>
         </div>
         <div className="flex flex-1 flex-col items-center justify-center text-sm">
-          <span>
-            Win rate: {(((profitTrades.length || 1) / (lossTrades.length || 1)) * 100).toFixed(2)}%
-          </span>
+          <span>Win rate: {winRate.toFixed(2)}%</span>
           <span>avg: {(pnl / tradesOnDate.length).toFixed(2)}</span>
           <span>count: {tradesOnDate.length}</span>
         </div>
