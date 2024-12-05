@@ -62,6 +62,7 @@ export async function GET() {
       tp_price: tpPrice,
       sl_price: slPrice,
       unrealized_pnl,
+      unrealized_pnl_percent: (unrealized_pnl / starting_balance) * 100,
       fee: fee24H,
       pnl: pnl24H,
       risk_ratio,
