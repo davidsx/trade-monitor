@@ -118,8 +118,8 @@ export default function Positions({ positions }: Props) {
                   )}
                 </div>
                 <div className="flex flex-col items-end gap-1">
-                  <div className={cn('text-md', getTextColor(unrealized_pnl))}>
-                    {unrealized_pnl.toFixed(2)}({unrealized_pnl_percent.toFixed(2)}%)
+                  <div className={cn('text-sm', getTextColor(unrealized_pnl))}>
+                    {unrealized_pnl.toFixed(2)} ({unrealized_pnl_percent.toFixed(2)}%)
                     {/* ({Math.abs(unrealized_pnl / ((sl_price - entry_price) * quantity)).toFixed(2)}R) */}
                   </div>
                   {showDetail && (
