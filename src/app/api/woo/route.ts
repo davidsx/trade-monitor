@@ -61,7 +61,7 @@ export async function GET() {
           Math.abs((sl_price || averageOpenPrice) - averageOpenPrice)
         : null;
     return {
-      symbol,
+      symbol: symbol.replace('PERP_', '').replace('_USDT', ''),
       position_side: positionSide,
       quantity: holding,
       entry_price: averageOpenPrice,

@@ -59,9 +59,7 @@ export default function Positions({ positions }: Props) {
                 key={`${symbol}-${position_side}`}
               >
                 <div className="flex flex-1 flex-col gap-1">
-                  <span className="whitespace-nowrap">
-                    {symbol.replace('PERP_', '').replace('_USDT', '')}-PERP
-                  </span>
+                  <span className="whitespace-nowrap">{symbol}</span>
                   <div className="flex items-center gap-1">
                     <span
                       className={cn(
@@ -78,7 +76,7 @@ export default function Positions({ positions }: Props) {
                   </div>
                   {showDetail && (
                     <>
-                      <div className="flex justify-between text-sm text-xs text-zinc-500 opacity-80">
+                      <div className="flex justify-between text-xs text-zinc-500 opacity-80">
                         Mark price: {mark_price.toFixed(2)}
                       </div>
                       {entry_price > 0 && (
