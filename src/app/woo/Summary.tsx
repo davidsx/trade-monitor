@@ -199,7 +199,7 @@ export default function Summary({ accountDetail }: Props) {
         </div>
       )}
       {/* Closed Positions */}
-      {/* <div className="flex w-full items-center justify-between rounded-xl border border-zinc-500 p-4">
+      <div className="flex w-full items-center justify-between rounded-xl border border-zinc-500 p-4">
         <div className="flex flex-col items-start">
           <div className="text-sm opacity-50">Daily Loss</div>
           <div className="text-xl text-red-500">{totalLossToday.toFixed(2)}</div>
@@ -219,7 +219,7 @@ export default function Summary({ accountDetail }: Props) {
             ({totalProfitTodayPercent.toFixed(2)}%)
           </span>
         </div>
-      </div> */}
+      </div>
     </section>
   );
 }
