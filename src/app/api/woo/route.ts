@@ -37,6 +37,7 @@ export async function GET() {
   const positions = positionResponse.data.positions.map((position) => {
     const { symbol, fee24H, pnl24H, positionSide, averageOpenPrice, markPrice, holding } = position;
     const unrealized_pnl = (markPrice - averageOpenPrice) * holding;
+    const unrealized_pnl_percent = (unrealized_pnl / starting_balance) * 100;
     const algoOrders =
       openingOrderResponse.data.rows.find(
         (algoOrder) =>
@@ -45,13 +46,17 @@ export async function GET() {
           algoOrder.algoType === 'POSITIONAL_TP_SL',
       )?.childOrders || [];
     const tpOrder = algoOrders.find((algoOrder) => algoOrder.algoType === 'TAKE_PROFIT');
-    const tpPrice = tpOrder?.triggerPrice;
+    const tp_price = tpOrder?.triggerPrice;
+    const tp_pnl = tp_price ? Math.abs((tp_price - averageOpenPrice) * holding) : undefined;
+    const tp_pnl_percent = tp_pnl ? ((tp_pnl / starting_balance) * 100).toFixed(2) : undefined;
     const slOrder = algoOrders.find((algoOrder) => algoOrder.algoType === 'STOP_LOSS');
-    const slPrice = slOrder?.triggerPrice;
+    const sl_price = slOrder?.triggerPrice;
+    const sl_pnl = sl_price ? Math.abs((sl_price - averageOpenPrice) * holding) : undefined;
+    const sl_pnl_percent = sl_pnl ? ((sl_pnl / starting_balance) * 100).toFixed(2) : undefined;
     const risk_ratio =
-      tpPrice && slPrice
-        ? Math.abs((tpPrice || averageOpenPrice) - averageOpenPrice) /
-          Math.abs((slPrice || averageOpenPrice) - averageOpenPrice)
+      tp_price && sl_price
+        ? Math.abs((tp_price || averageOpenPrice) - averageOpenPrice) /
+          Math.abs((sl_price || averageOpenPrice) - averageOpenPrice)
         : null;
     return {
       symbol,
@@ -59,10 +64,14 @@ export async function GET() {
       quantity: holding,
       entry_price: averageOpenPrice,
       mark_price: markPrice,
-      tp_price: tpPrice,
-      sl_price: slPrice,
+      tp_price,
+      tp_pnl,
+      tp_pnl_percent,
+      sl_price,
+      sl_pnl,
+      sl_pnl_percent,
       unrealized_pnl,
-      unrealized_pnl_percent: (unrealized_pnl / starting_balance) * 100,
+      unrealized_pnl_percent,
       fee: fee24H,
       pnl: pnl24H,
       risk_ratio,

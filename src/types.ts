@@ -21,7 +21,11 @@ export interface Position {
   fee: number;
   pnl: number;
   tp_price?: number;
+  tp_pnl?: number;
+  tp_pnl_percent?: number;
   sl_price?: number;
+  sl_pnl?: number;
+  sl_pnl_percent?: number;
   risk_ratio?: number;
 }
 
