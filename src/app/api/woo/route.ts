@@ -22,6 +22,7 @@ export async function GET() {
   );
 
   const target_percent = 0.2;
+  const available_balance = accountInfo.data.freeCollateral;
   const equity = accountInfo.data.totalAccountValue;
   const starting_balance = equity - unrealized - realized + fee;
   const target_balance = starting_balance * (1 + target_percent);
@@ -122,6 +123,7 @@ export async function GET() {
   return NextResponse.json({
     target_percent,
     starting_balance,
+    available_balance,
     target_balance,
     balance,
     balance_percent,

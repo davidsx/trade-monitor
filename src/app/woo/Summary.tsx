@@ -14,6 +14,7 @@ export default function Summary({ accountDetail }: Props) {
   const {
     starting_balance,
     target_balance,
+    available_balance,
     balance,
     balance_percent,
     equity,
@@ -84,9 +85,11 @@ export default function Summary({ accountDetail }: Props) {
             <div className="text-sm opacity-50">Starting Balance</div>
             <div className="text-xl">{starting_balance.toFixed(2)}</div>
             <div className="whitespace-nowrap text-xs opacity-50">
+              Available: {available_balance.toFixed(2)}
+            </div>
+            <div className="whitespace-nowrap text-xs opacity-50">
               Target: {target_balance.toFixed(2)}
             </div>
-            <div className="whitespace-nowrap text-xs opacity-50">(20%)</div>
           </div>
           <div className="flex flex-col items-center justify-center">
             <IconArrowRight size={24} />
@@ -111,14 +114,14 @@ export default function Summary({ accountDetail }: Props) {
             </div>
           </div>
         </div>
-        {equity_percent > 20 && (
+        {/* {equity_percent > 20 && (
           <div className="flex flex-col items-center text-green-500">
             <span className="text-md uppercase">Take profit now 🚀</span>
             {equity_percent > 40 && (
               <span className="text-sm opacity-80">At least check the chart</span>
             )}
           </div>
-        )}
+        )} */}
       </div>
       {/* Current PnL */}
       <div className="flex w-full flex-col items-center gap-2 rounded-xl border border-zinc-500 p-4">

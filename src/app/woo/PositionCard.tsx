@@ -40,10 +40,6 @@ export default function PositionCard({
     { refreshInterval: 60 * 1000 },
   );
 
-  if (kline) {
-    console.log(kline);
-  }
-
   return (
     <button
       className={cn(
@@ -136,7 +132,7 @@ export default function PositionCard({
           )}
         </div>
       </div>
-      {showKLine && kline && (
+      {showKLine && !isLoadingKLine && kline && (
         <div className="p-4">
           <PriceChart
             data={kline.map((e) => ({ time: e.time as UTCTimestamp, value: e.close }))}
