@@ -30,7 +30,9 @@ export interface Position {
 }
 
 export interface AccountDetail {
+  target_percent: number;
   starting_balance: number;
+  target_balance: number;
   balance: number;
   balance_percent: number;
   equity: number;

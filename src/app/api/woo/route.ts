@@ -21,8 +21,10 @@ export async function GET() {
     { unrealized: 0, realized: 0, fee: 0 },
   );
 
+  const target_percent = 0.2;
   const equity = accountInfo.data.totalAccountValue;
   const starting_balance = equity - unrealized - realized + fee;
+  const target_balance = starting_balance * (1 + target_percent);
   const balance = equity - unrealized;
   const balance_percent = ((balance - starting_balance) / starting_balance) * 100;
   const equity_percent = ((equity - starting_balance) / starting_balance) * 100;
@@ -118,7 +120,9 @@ export async function GET() {
     });
 
   return NextResponse.json({
+    target_percent,
     starting_balance,
+    target_balance,
     balance,
     balance_percent,
     equity,

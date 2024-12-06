@@ -10,15 +10,15 @@ interface Props {
 export default function CoffeeView({ accountDetail }: Props) {
   const {
     starting_balance,
+    target_balance,
     equity,
     equity_percent,
-    unrealized,
     realized,
-    fee,
+    realized_percent,
+    unrealized,
+    unrealized_percent,
     pnl,
-    fee_percent,
-    per_position_unrealized,
-    per_position_unrealized_percent,
+    pnl_percent,
   } = accountDetail;
 
   return (
@@ -35,12 +35,14 @@ export default function CoffeeView({ accountDetail }: Props) {
         <div className="flex w-full items-center">
           <div className="flex flex-1 flex-col items-start">
             <div className="text-xl">{starting_balance.toFixed(2)}</div>
+            <span className="text-sm opacity-50">({target_balance.toFixed(2)})</span>
           </div>
           <div className="flex flex-col items-center justify-center">
             <IconArrowRight size={24} />
           </div>
           <div className="flex flex-1 flex-col items-end">
             <div className="text-xl">{equity.toFixed(2)}</div>
+            <span className="text-sm opacity-50">({equity_percent.toFixed(2)}%)</span>
           </div>
         </div>
         <div className="flex w-full items-center">
@@ -57,9 +59,9 @@ export default function CoffeeView({ accountDetail }: Props) {
           </div>
         </div>
         <div className="flex w-full items-center justify-between whitespace-nowrap text-sm opacity-50">
-          <span>{per_position_unrealized.toFixed(2)}</span>
-          <span>({equity_percent.toFixed(2)}%)</span>
-          <span>-{fee.toFixed(2)}</span>
+          <span>({realized_percent.toFixed(2)}%)</span>
+          <span>({unrealized_percent.toFixed(2)}%)</span>
+          <span>({pnl_percent.toFixed(2)}%)</span>
         </div>
       </div>
     </section>

@@ -13,6 +13,7 @@ interface Props {
 export default function Summary({ accountDetail }: Props) {
   const {
     starting_balance,
+    target_balance,
     balance,
     balance_percent,
     equity,
@@ -82,7 +83,7 @@ export default function Summary({ accountDetail }: Props) {
           <div className="flex flex-1 flex-col items-start">
             <div className="text-sm opacity-50">Starting Balance</div>
             <div className="text-xl">{starting_balance.toFixed(2)}</div>
-            <div className="text-sm opacity-50">Target: {(starting_balance * 1.2).toFixed(2)}</div>
+            <div className="text-sm opacity-50">Target: {target_balance.toFixed(2)}</div>
             <div className="text-sm opacity-50">(20%)</div>
           </div>
           <div className="flex flex-col items-center justify-center">
