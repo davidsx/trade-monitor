@@ -5,10 +5,12 @@ import {
   PageResponse,
   WOOAccountInfo,
   WOOAlgoOrder,
+  WOOKline,
   WOOOrder,
   WOOPosition,
   WOOTradeHistory,
 } from './types';
+import { Interval } from '@/types';
 // import { addDays, startOfDay } from 'date-fns';
 
 export const API_DOMAIN = 'https://api.woo.org/';
@@ -103,6 +105,15 @@ export default class WooService {
     // const tmr = (addDays(startOfDay(new Date()), 1).getTime() / 1000).toFixed(3);
     // console.log(today, tmr);
     const data = await this.get<BasicResponse<{ positions: WOOPosition[] }>>(`/v3/positions`);
+    return data;
+  }
+
+  async getKline(symbol: string, interval: Interval, limit = 100) {
+    // const symbolInfo = await this.get<PageResponse<{ symbol: string }>>(`/v1/public/info`);
+    // console.log(symbolInfo.rows.find((e) => e.symbol.includes(symbol)));
+    const data = await this.get<PageResponse<WOOKline>>(
+      `/v1/public/kline?symbol=${symbol}&type=${interval}&limit=${limit}`,
+    );
     return data;
   }
 }

@@ -55,3 +55,13 @@ export interface AccountDetail {
   positions: Position[];
   trades: Trade[];
 }
+
+export interface KLine {
+  time: number;
+  open: number;
+  close: number;
+  high: number;
+  low: number;
+}
+
+export type Interval = '1m' | '5m' | '15m' | '1h' | '4h' | '1d';

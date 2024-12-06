@@ -114,6 +114,19 @@ export interface WOOPosition {
   positionSide: 'LONG' | 'SHORT';
 }
 
+export interface WOOKline {
+  open: number;
+  close: number;
+  low: number;
+  high: number;
+  volume: number;
+  amount: number;
+  symbol: string;
+  type: string;
+  start_timestamp: number;
+  end_timestamp: number;
+}
+
 export interface PageMeta {
   total: number;
   records_per_page: number;

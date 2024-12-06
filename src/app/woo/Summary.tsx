@@ -72,7 +72,7 @@ export default function Summary({ accountDetail }: Props) {
       {/* Balance */}
       <div
         className={cn(
-          'flex w-full flex-col items-center gap-4 rounded-xl border border-zinc-500 p-4',
+          'flex w-full flex-col items-center rounded-xl border border-zinc-500 p-4',
           equity_percent > 20 && 'border-4 border-green-500',
           equity_percent > 40 && 'bg-green-500 bg-opacity-20',
           equity_percent < -10 && 'border-4 border-red-500',
@@ -83,8 +83,10 @@ export default function Summary({ accountDetail }: Props) {
           <div className="flex flex-1 flex-col items-start">
             <div className="text-sm opacity-50">Starting Balance</div>
             <div className="text-xl">{starting_balance.toFixed(2)}</div>
-            <div className="text-sm opacity-50">Target: {target_balance.toFixed(2)}</div>
-            <div className="text-sm opacity-50">(20%)</div>
+            <div className="whitespace-nowrap text-xs opacity-50">
+              Target: {target_balance.toFixed(2)}
+            </div>
+            <div className="whitespace-nowrap text-xs opacity-50">(20%)</div>
           </div>
           <div className="flex flex-col items-center justify-center">
             <IconArrowRight size={24} />
@@ -101,10 +103,10 @@ export default function Summary({ accountDetail }: Props) {
           <div className="flex flex-1 flex-col items-end">
             <div className="text-sm opacity-50">Equity</div>
             <div className="text-xl">{equity.toFixed(2)}</div>
-            <div className="whitespace-nowrap text-sm opacity-50">
+            <div className="whitespace-nowrap text-xs opacity-50">
               Current: {balance.toFixed(2)}
             </div>
-            <div className="whitespace-nowrap text-sm opacity-50">
+            <div className="whitespace-nowrap text-xs opacity-50">
               ({balance_percent.toFixed(2)}%)
             </div>
           </div>
