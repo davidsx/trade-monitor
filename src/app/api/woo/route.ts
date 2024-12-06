@@ -51,11 +51,11 @@ export async function GET() {
     const tpOrder = algoOrders.find((algoOrder) => algoOrder.algoType === 'TAKE_PROFIT');
     const tp_price = tpOrder?.triggerPrice;
     const tp_pnl = tp_price ? Math.abs((tp_price - averageOpenPrice) * holding) : undefined;
-    const tp_pnl_percent = tp_pnl ? ((tp_pnl / starting_balance) * 100).toFixed(2) : undefined;
+    const tp_pnl_percent = tp_pnl ? (tp_pnl / starting_balance) * 100 : undefined;
     const slOrder = algoOrders.find((algoOrder) => algoOrder.algoType === 'STOP_LOSS');
     const sl_price = slOrder?.triggerPrice;
     const sl_pnl = sl_price ? Math.abs((sl_price - averageOpenPrice) * holding) : undefined;
-    const sl_pnl_percent = sl_pnl ? ((sl_pnl / starting_balance) * 100).toFixed(2) : undefined;
+    const sl_pnl_percent = sl_pnl ? (sl_pnl / starting_balance) * 100 : undefined;
     const risk_ratio =
       tp_price && sl_price
         ? Math.abs((tp_price || averageOpenPrice) - averageOpenPrice) /
@@ -90,7 +90,8 @@ export async function GET() {
     (acc, { sl_price, entry_price, quantity, position_side }) =>
       acc +
       (entry_price && sl_price && quantity
-        ? (position_side === 'LONG' ? sl_price - entry_price : entry_price - sl_price) * Math.abs(quantity)
+        ? (position_side === 'LONG' ? sl_price - entry_price : entry_price - sl_price) *
+          Math.abs(quantity)
         : 0),
     0,
   );
@@ -99,7 +100,9 @@ export async function GET() {
   const total_target = positions.reduce(
     (acc, { tp_price, entry_price, quantity }) =>
       acc +
-      (entry_price && tp_price && quantity ? Math.abs((tp_price - entry_price) * Math.abs(quantity)) : 0),
+      (entry_price && tp_price && quantity
+        ? Math.abs((tp_price - entry_price) * Math.abs(quantity))
+        : 0),
     0,
   );
   const total_target_percent = (total_target / starting_balance) * 100;

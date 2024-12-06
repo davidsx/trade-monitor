@@ -82,7 +82,7 @@ export default function PositionCard({
                 <div className="flex flex-col">
                   {tp_price && tp_pnl && tp_pnl_percent ? (
                     <span className="text-xs text-green-500 opacity-60">
-                      TP: {tp_price.toFixed(2)} ({tp_pnl.toFixed(2)}) ({tp_pnl_percent}%)
+                      TP: {tp_price.toFixed(2)} ({tp_pnl.toFixed(2)}) ({tp_pnl_percent.toFixed(2)}%)
                     </span>
                   ) : (
                     <span className="text-xs font-semibold text-green-500">NO TAKE PROFIT!!!</span>
@@ -97,7 +97,7 @@ export default function PositionCard({
                           : 'text-red-500',
                       )}
                     >
-                      SL: {sl_price.toFixed(2)} ({sl_pnl.toFixed(2)}) ({sl_pnl_percent}%)
+                      SL: {sl_price.toFixed(2)} ({sl_pnl.toFixed(2)}) ({sl_pnl_percent.toFixed(2)}%)
                     </span>
                   ) : (
                     <span className="text-xs font-semibold text-red-500">NO STOP LOSS!!!</span>
