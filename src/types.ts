@@ -19,7 +19,9 @@ export interface Position {
   unrealized_pnl: number;
   unrealized_pnl_percent: number;
   fee: number;
+  fee_percent: number;
   pnl: number;
+  pnl_percent: number;
   tp_price?: number;
   tp_pnl?: number;
   tp_pnl_percent?: number;

@@ -61,6 +61,10 @@ export async function GET() {
         ? Math.abs((tp_price || averageOpenPrice) - averageOpenPrice) /
           Math.abs((sl_price || averageOpenPrice) - averageOpenPrice)
         : null;
+    const pnl = pnl24H;
+    const pnl_percent = (pnl / starting_balance) * 100;
+    const fee = fee24H;
+    const fee_percent = (fee / starting_balance) * 100;
     return {
       symbol: symbol.replace('PERP_', '').replace('_USDT', ''),
       position_side: positionSide,
@@ -75,8 +79,10 @@ export async function GET() {
       sl_pnl_percent,
       unrealized_pnl,
       unrealized_pnl_percent,
-      fee: fee24H,
-      pnl: pnl24H,
+      fee,
+      fee_percent,
+      pnl,
+      pnl_percent,
       risk_ratio,
     };
   });
