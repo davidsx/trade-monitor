@@ -113,22 +113,19 @@ export default function PositionCard({
           )}
         </div>
         <div className="flex flex-col items-end gap-1">
-          <div className={cn('text-sm', getTextColor(unrealized_pnl))}>
+          {sl_pnl_percent ? (
+            <div className={cn('text-sm', getTextColor(unrealized_pnl))}>
+              {(unrealized_pnl_percent / sl_pnl_percent).toFixed(2)}R ({sl_pnl_percent.toFixed(2)}%)
+            </div>
+          ) : (
+            <div className="text-sm text-zinc-500">No stop loss</div>
+          )}
+          <div className={cn('text-sm text-zinc-500 opacity-60')}>
             {unrealized_pnl.toFixed(2)} ({unrealized_pnl_percent.toFixed(2)}%)
             {/* ({Math.abs(unrealized_pnl / ((sl_price - entry_price) * quantity)).toFixed(2)}R) */}
           </div>
           {showDetail && (
-            <>
-              <div className={cn(getTextColor(pnl - fee), 'text-sm')}>
-                PnL: {(pnl - fee).toFixed(2)}
-              </div>
-              <div className="text-sm text-zinc-500">Fee paid: {fee.toFixed(2)}</div>
-              {pnl !== 0 && (
-                <div className={cn(getTextColor(pnl), 'text-xs opacity-40')}>
-                  PnL before fee: {pnl.toFixed(2)}
-                </div>
-              )}
-            </>
+            <div className="text-sm text-zinc-500 opacity-60">Fee paid: {fee.toFixed(2)}</div>
           )}
         </div>
       </div>
