@@ -21,7 +21,7 @@ export async function GET() {
     { unrealized: 0, realized: 0, fee: 0 },
   );
 
-  const target_percent = 0.2;
+  const target_percent = 0.1;
   const available_balance = accountInfo.data.freeCollateral;
   const equity = accountInfo.data.totalAccountValue;
   const starting_balance = equity - unrealized - realized + fee;
