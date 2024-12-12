@@ -55,7 +55,7 @@ export async function GET() {
         ? (tp_price - averageOpenPrice) * holding
         : (averageOpenPrice - tp_price) * holding
       : undefined;
-    const tp_pnl_percent = tp_pnl ? (tp_pnl / starting_balance) * 100 : undefined;
+    const tp_pnl_percent = tp_pnl !== undefined ? (tp_pnl / starting_balance) * 100 : undefined;
     const slOrder = algoOrders.find((algoOrder) => algoOrder.algoType === 'STOP_LOSS');
     const sl_price = slOrder?.triggerPrice;
     const sl_pnl = sl_price
@@ -63,7 +63,7 @@ export async function GET() {
         ? (sl_price - averageOpenPrice) * holding
         : (averageOpenPrice - sl_price) * holding
       : undefined;
-    const sl_pnl_percent = sl_pnl ? (sl_pnl / starting_balance) * 100 : undefined;
+    const sl_pnl_percent = sl_pnl !== undefined ? (sl_pnl / starting_balance) * 100 : undefined;
     const risk_ratio =
       tp_price && sl_price
         ? Math.abs((tp_price || averageOpenPrice) - averageOpenPrice) /

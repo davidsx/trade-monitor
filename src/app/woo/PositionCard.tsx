@@ -32,6 +32,8 @@ export default function PositionCard({
     risk_ratio,
   } = position;
 
+  console.log(symbol, tp_pnl, tp_pnl_percent, sl_pnl, sl_pnl_percent);
+
   const [showKLine, setShowKLine] = useState(false);
 
   const { data: kline, isLoading: isLoadingKLine } = useSWR(
@@ -80,25 +82,34 @@ export default function PositionCard({
               </div>
               {entry_price > 0 && (
                 <div className="flex flex-col">
-                  {tp_price && tp_pnl && tp_pnl_percent ? (
+                  {tp_price !== undefined &&
+                  tp_pnl !== undefined &&
+                  tp_pnl_percent !== undefined ? (
                     <span className="text-xs text-green-500 opacity-60">
                       TP: {tp_price.toFixed(2)} ({tp_pnl.toFixed(2)}) ({tp_pnl_percent.toFixed(2)}%)
                     </span>
                   ) : (
                     <span className="text-xs font-semibold text-green-500">NO TAKE PROFIT!!!</span>
                   )}
-                  {sl_price && sl_pnl && sl_pnl_percent ? (
-                    <span
-                      className={cn(
-                        'text-xs opacity-60',
-                        (position_side === 'LONG' && sl_price > entry_price) ||
-                          (position_side === 'SHORT' && sl_price < entry_price)
-                          ? 'text-green-500'
-                          : 'text-red-500',
-                      )}
-                    >
-                      SL: {sl_price.toFixed(2)} ({sl_pnl.toFixed(2)}) ({sl_pnl_percent.toFixed(2)}%)
-                    </span>
+                  {sl_price !== undefined &&
+                  sl_pnl !== undefined &&
+                  sl_pnl_percent !== undefined ? (
+                    sl_pnl < 0 && sl_pnl_percent < 9 ? (
+                      <span
+                        className={cn(
+                          'text-xs opacity-60',
+                          (position_side === 'LONG' && sl_price > entry_price) ||
+                            (position_side === 'SHORT' && sl_price < entry_price)
+                            ? 'text-green-500'
+                            : 'text-red-500',
+                        )}
+                      >
+                        SL: {sl_price.toFixed(2)} ({sl_pnl.toFixed(2)}) ({sl_pnl_percent.toFixed(2)}
+                        %)
+                      </span>
+                    ) : (
+                      <span className="text-xs opacity-60 font-semibold text-zinc-500">No risk</span>
+                    )
                   ) : (
                     <span className="text-xs font-semibold text-red-500">NO STOP LOSS!!!</span>
                   )}
@@ -113,10 +124,15 @@ export default function PositionCard({
           )}
         </div>
         <div className="flex flex-col items-end gap-1">
-          {sl_pnl_percent ? (
-            <div className={cn('text-sm', getTextColor(unrealized_pnl))}>
-              {Math.abs(unrealized_pnl_percent / sl_pnl_percent).toFixed(2)}R ({Math.abs(sl_pnl_percent).toFixed(2)}%)
-            </div>
+          {sl_pnl_percent !== undefined ? (
+            sl_pnl_percent < 0 ? (
+              <div className={cn('text-sm', getTextColor(unrealized_pnl))}>
+                {Math.abs(unrealized_pnl_percent / sl_pnl_percent).toFixed(2)}R (
+                {Math.abs(sl_pnl_percent).toFixed(2)}%)
+              </div>
+            ) : (
+              <div className="text-sm text-green-500">Risk free</div>
+            )
           ) : (
             <div className="text-sm text-zinc-500">No stop loss</div>
           )}
