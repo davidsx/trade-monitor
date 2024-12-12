@@ -115,7 +115,7 @@ export default function PositionCard({
         <div className="flex flex-col items-end gap-1">
           {sl_pnl_percent ? (
             <div className={cn('text-sm', getTextColor(unrealized_pnl))}>
-              {(unrealized_pnl_percent / sl_pnl_percent).toFixed(2)}R ({sl_pnl_percent.toFixed(2)}%)
+              {Math.abs(unrealized_pnl_percent / sl_pnl_percent).toFixed(2)}R ({Math.abs(sl_pnl_percent).toFixed(2)}%)
             </div>
           ) : (
             <div className="text-sm text-zinc-500">No stop loss</div>
