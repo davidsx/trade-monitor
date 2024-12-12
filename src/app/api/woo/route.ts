@@ -50,11 +50,19 @@ export async function GET() {
       )?.childOrders || [];
     const tpOrder = algoOrders.find((algoOrder) => algoOrder.algoType === 'TAKE_PROFIT');
     const tp_price = tpOrder?.triggerPrice;
-    const tp_pnl = tp_price ? Math.abs((tp_price - averageOpenPrice) * holding) : undefined;
+    const tp_pnl = tp_price
+      ? positionSide === 'LONG'
+        ? (tp_price - averageOpenPrice) * holding
+        : (averageOpenPrice - tp_price) * holding
+      : undefined;
     const tp_pnl_percent = tp_pnl ? (tp_pnl / starting_balance) * 100 : undefined;
     const slOrder = algoOrders.find((algoOrder) => algoOrder.algoType === 'STOP_LOSS');
     const sl_price = slOrder?.triggerPrice;
-    const sl_pnl = sl_price ? Math.abs((sl_price - averageOpenPrice) * holding) : undefined;
+    const sl_pnl = sl_price
+      ? positionSide === 'LONG'
+        ? (sl_price - averageOpenPrice) * holding
+        : (averageOpenPrice - sl_price) * holding
+      : undefined;
     const sl_pnl_percent = sl_pnl ? (sl_pnl / starting_balance) * 100 : undefined;
     const risk_ratio =
       tp_price && sl_price
