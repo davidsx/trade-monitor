@@ -71,11 +71,11 @@ export default function PositionCard({
                 {position_side}
               </span>
               <span className="whitespace-nowrap text-xs">
-                {Math.abs(quantity).toFixed(2)} @ {entry_price.toFixed(2)}
+                {quantity.toFixed(2)} @ {entry_price.toFixed(2)}
               </span>
             </div>
           </div>
-          {showDetail && (
+          {showDetail ? (
             <>
               <div className="flex justify-between text-xs text-zinc-500 opacity-80">
                 Mark price: {mark_price.toFixed(2)}
@@ -108,19 +108,40 @@ export default function PositionCard({
                         %)
                       </span>
                     ) : (
-                      <span className="text-xs opacity-60 font-semibold text-zinc-500">No risk</span>
+                      <span className="text-xs font-semibold text-zinc-500 opacity-60">
+                        No risk
+                      </span>
                     )
                   ) : (
                     <span className="text-xs font-semibold text-red-500">NO STOP LOSS!!!</span>
                   )}
                   {risk_ratio && (
                     <span className="text-xs text-zinc-500 opacity-60">
-                      RR: (1:{risk_ratio.toFixed(1)})
+                      RR: 1:{risk_ratio.toFixed(1)}
                     </span>
                   )}
                 </div>
               )}
             </>
+          ) : (
+            <div className="flex items-center gap-1 text-xs text-zinc-500">
+              <span>Risk:</span>
+              <span>
+                {sl_pnl_percent !== undefined
+                  ? sl_pnl_percent >= 0
+                    ? '-'
+                    : Math.abs(sl_pnl_percent).toFixed(2) + '%'
+                  : 'NO SL'}
+              </span>
+              <span>Target:</span>
+              <span>
+                {tp_pnl_percent !== undefined
+                  ? sl_pnl_percent !== undefined && sl_pnl_percent >= 0
+                    ? Math.abs(tp_pnl_percent || 1).toFixed(2) + '%'
+                    : Math.abs(tp_pnl_percent / (sl_pnl_percent || 1)).toFixed(2) + 'R'
+                  : 'NO TP'}
+              </span>
+            </div>
           )}
         </div>
         <div className="flex flex-col items-end gap-1">
@@ -136,9 +157,8 @@ export default function PositionCard({
           ) : (
             <div className="text-sm text-zinc-500">No stop loss</div>
           )}
-          <div className={cn('text-sm text-zinc-500 opacity-60')}>
+          <div className={cn('text-xs text-zinc-500 opacity-60', getTextColor(unrealized_pnl))}>
             {unrealized_pnl.toFixed(2)} ({unrealized_pnl_percent.toFixed(2)}%)
-            {/* ({Math.abs(unrealized_pnl / ((sl_price - entry_price) * quantity)).toFixed(2)}R) */}
           </div>
           {showDetail && (
             <div className="text-sm text-zinc-500 opacity-60">Fee paid: {fee.toFixed(2)}</div>

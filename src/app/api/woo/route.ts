@@ -38,8 +38,20 @@ export async function GET() {
   const fee_percent = (fee / starting_balance) * 100;
 
   const positions = positionResponse.data.positions.map((position) => {
-    const { symbol, fee24H, pnl24H, positionSide, averageOpenPrice, markPrice, holding } = position;
-    const unrealized_pnl = (markPrice - averageOpenPrice) * holding;
+    const {
+      symbol,
+      fee24H: fee,
+      pnl24H: pnl,
+      positionSide: position_side,
+      averageOpenPrice: entry_price,
+      markPrice: mark_price,
+      holding,
+    } = position;
+    const quantity = Math.abs(holding);
+    const unrealized_pnl =
+      position_side === 'LONG'
+        ? (mark_price - entry_price) * quantity
+        : (entry_price - mark_price) * quantity;
     const unrealized_pnl_percent = (unrealized_pnl / starting_balance) * 100;
     const algoOrders =
       openingOrderResponse.data.rows.find(
@@ -51,34 +63,32 @@ export async function GET() {
     const tpOrder = algoOrders.find((algoOrder) => algoOrder.algoType === 'TAKE_PROFIT');
     const tp_price = tpOrder?.triggerPrice;
     const tp_pnl = tp_price
-      ? positionSide === 'LONG'
-        ? (tp_price - averageOpenPrice) * holding
-        : (averageOpenPrice - tp_price) * holding
+      ? position_side === 'LONG'
+        ? (tp_price - entry_price) * quantity
+        : (entry_price - tp_price) * quantity
       : undefined;
     const tp_pnl_percent = tp_pnl !== undefined ? (tp_pnl / starting_balance) * 100 : undefined;
     const slOrder = algoOrders.find((algoOrder) => algoOrder.algoType === 'STOP_LOSS');
     const sl_price = slOrder?.triggerPrice;
     const sl_pnl = sl_price
-      ? positionSide === 'LONG'
-        ? (sl_price - averageOpenPrice) * holding
-        : (averageOpenPrice - sl_price) * holding
+      ? position_side === 'LONG'
+        ? (sl_price - entry_price) * quantity
+        : (entry_price - sl_price) * quantity
       : undefined;
     const sl_pnl_percent = sl_pnl !== undefined ? (sl_pnl / starting_balance) * 100 : undefined;
     const risk_ratio =
       tp_price && sl_price
-        ? Math.abs((tp_price || averageOpenPrice) - averageOpenPrice) /
-          Math.abs((sl_price || averageOpenPrice) - averageOpenPrice)
+        ? Math.abs((tp_price || entry_price) - entry_price) /
+          Math.abs((sl_price || entry_price) - entry_price)
         : null;
-    const pnl = pnl24H;
     const pnl_percent = (pnl / starting_balance) * 100;
-    const fee = fee24H;
     const fee_percent = (fee / starting_balance) * 100;
     return {
       symbol: symbol.replace('PERP_', '').replace('_USDT', ''),
-      position_side: positionSide,
-      quantity: holding,
-      entry_price: averageOpenPrice,
-      mark_price: markPrice,
+      position_side,
+      quantity,
+      entry_price,
+      mark_price,
       tp_price,
       tp_pnl,
       tp_pnl_percent,
