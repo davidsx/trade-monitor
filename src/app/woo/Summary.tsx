@@ -1,10 +1,11 @@
 import { cn } from '@/styles';
 import { AccountDetail } from '@/types';
 import { getTextColor } from '@/utils';
-import { IconArrowRight, IconEqual, IconPlus } from '@tabler/icons-react';
+import { IconArrowRight, IconEqual, IconMinus, IconPlus } from '@tabler/icons-react';
 import { startOfDay } from 'date-fns';
 import { endOfDay } from 'date-fns';
 import { fromZonedTime, toZonedTime } from 'date-fns-tz';
+import { useState } from 'react';
 
 interface Props {
   accountDetail: AccountDetail;
@@ -35,6 +36,9 @@ export default function Summary({ accountDetail }: Props) {
     total_target_percent,
     total_risk_ratio,
   } = accountDetail;
+
+  const [hideExpected, setHideExpected] = useState(false);
+  const [hideClosed, setHideClosed] = useState(false);
 
   const date = toZonedTime(new Date(), 'UTC');
   const dateStart = fromZonedTime(startOfDay(date), 'UTC');
@@ -170,8 +174,20 @@ export default function Summary({ accountDetail }: Props) {
         </div>
       </div>
       {/* Expected Profit and Loss */}
-      {((total_risk ?? 0) !== 0 || (total_target ?? 0) !== 0) && (
-        <div className="flex w-full items-center rounded-xl border border-zinc-500 p-4">
+      {((total_risk ?? 0) !== 0 || (total_target ?? 0) !== 0) && hideExpected ? (
+        <div className="flex w-full items-center justify-center rounded-lg border border-zinc-500 p-2">
+          <button onClick={() => setHideExpected(false)} className="rounded-full bg-zinc-500 p-0.5">
+            <IconPlus size={16} />
+          </button>
+        </div>
+      ) : (
+        <div className="group relative flex w-full items-center rounded-xl border border-zinc-500 p-4">
+          <button
+            className="absolute -right-1 -top-1 rounded-full bg-zinc-500 p-0.5 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+            onClick={() => setHideExpected(true)}
+          >
+            <IconMinus size={12} />
+          </button>
           <div className="flex flex-1 flex-col items-start">
             <div className="text-sm opacity-50">Expected Loss</div>
             <div className={cn('text-xl', getTextColor(total_risk))}>{total_risk.toFixed(2)}</div>
@@ -199,27 +215,41 @@ export default function Summary({ accountDetail }: Props) {
         </div>
       )}
       {/* Closed Positions */}
-      <div className="flex w-full items-center justify-between rounded-xl border border-zinc-500 p-4">
-        <div className="flex flex-col items-start">
-          <div className="text-sm opacity-50">Daily Loss</div>
-          <div className="text-xl text-red-500">{totalLossToday.toFixed(2)}</div>
-          <span className="text-xs text-red-500 opacity-80">
-            ({totalLossTodayPercent.toFixed(2)}%)
-          </span>
+      {hideClosed ? (
+        <div className="flex w-full items-center justify-center rounded-lg border border-zinc-500 p-2">
+          <button onClick={() => setHideClosed(false)} className="rounded-full bg-zinc-500 p-0.5">
+            <IconPlus size={16} />
+          </button>
         </div>
-        <div className="flex flex-1 flex-col items-center justify-center text-sm">
-          <span>Win rate: {winRate.toFixed(2)}%</span>
-          <span>avg: {(realized / tradesOnDate.length).toFixed(2)}</span>
-          <span>count: {tradesOnDate.length}</span>
+      ) : (
+        <div className="group relative flex w-full items-center justify-between rounded-xl border border-zinc-500 p-4">
+          <button
+            className="absolute -right-1 -top-1 rounded-full bg-zinc-500 p-0.5 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+            onClick={() => setHideClosed(true)}
+          >
+            <IconMinus size={12} />
+          </button>
+          <div className="flex flex-col items-start">
+            <div className="text-sm opacity-50">Daily Loss</div>
+            <div className="text-xl text-red-500">{totalLossToday.toFixed(2)}</div>
+            <span className="text-xs text-red-500 opacity-80">
+              ({totalLossTodayPercent.toFixed(2)}%)
+            </span>
+          </div>
+          <div className="flex flex-1 flex-col items-center justify-center text-sm">
+            <span>Win rate: {winRate.toFixed(2)}%</span>
+            <span>avg: {(realized / tradesOnDate.length).toFixed(2)}</span>
+            <span>count: {tradesOnDate.length}</span>
+          </div>
+          <div className="flex flex-col items-end">
+            <div className="text-sm opacity-50">Daily Profit</div>
+            <div className="text-xl text-green-500">{totalProfitToday.toFixed(2)}</div>
+            <span className="text-xs text-green-500 opacity-80">
+              ({totalProfitTodayPercent.toFixed(2)}%)
+            </span>
+          </div>
         </div>
-        <div className="flex flex-col items-end">
-          <div className="text-sm opacity-50">Daily Profit</div>
-          <div className="text-xl text-green-500">{totalProfitToday.toFixed(2)}</div>
-          <span className="text-xs text-green-500 opacity-80">
-            ({totalProfitTodayPercent.toFixed(2)}%)
-          </span>
-        </div>
-      </div>
+      )}
     </section>
   );
 }
