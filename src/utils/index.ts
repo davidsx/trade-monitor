@@ -17,3 +17,17 @@ export function compareDateOnly(date1: string | number | Date, date2: string | n
 export function getTextColor(value: number, base: number = 0) {
   return cn('text-gray-500', value > base && 'text-green-500', value < base && 'text-red-500');
 }
+
+export function getRiskEmoji(risk?: number, pnl?: number) {
+  if (!risk || !pnl) return '😊';
+  const riskRatioPnl = pnl / Math.abs(risk) || 1;
+  if (riskRatioPnl > 5) return '🚀';
+  if (riskRatioPnl > 4) return '🔥';
+  if (riskRatioPnl > 3) return '⭐';
+  if (riskRatioPnl > 2) return '✅';
+  if (riskRatioPnl > 1) return '🟢';
+  if (riskRatioPnl > 0) return '💪';
+  if (riskRatioPnl > -0.2) return '🟡';
+  if (riskRatioPnl > -0.5) return '🔴';
+  return '💀';
+}

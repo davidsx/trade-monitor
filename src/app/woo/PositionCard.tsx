@@ -1,6 +1,6 @@
 import { cn } from '@/styles';
 import { KLine, Position } from '@/types';
-import { getTextColor } from '@/utils';
+import { getRiskEmoji, getTextColor } from '@/utils';
 import { useState } from 'react';
 import useSWR from 'swr';
 import PriceChart from './PriceChart';
@@ -31,8 +31,6 @@ export default function PositionCard({
     pnl,
     risk_ratio,
   } = position;
-
-  console.log(symbol, tp_pnl, tp_pnl_percent, sl_pnl, sl_pnl_percent);
 
   const [showKLine, setShowKLine] = useState(false);
 
@@ -147,12 +145,13 @@ export default function PositionCard({
         <div className="flex flex-col items-end gap-1">
           {sl_pnl_percent !== undefined ? (
             sl_pnl_percent < 0 ? (
-              <div className={cn('text-sm', getTextColor(unrealized_pnl))}>
-                {Math.abs(unrealized_pnl_percent / sl_pnl_percent).toFixed(2)}R (
-                {Math.abs(sl_pnl_percent).toFixed(2)}%)
+              <div className={cn('flex items-center gap-0.5 text-sm', getTextColor(unrealized_pnl))}>
+                <span>{Math.abs(unrealized_pnl_percent / sl_pnl_percent).toFixed(2)}R</span>
+                <span>({Math.abs(sl_pnl_percent).toFixed(2)}%)</span>
+                <span>{getRiskEmoji(sl_pnl_percent, unrealized_pnl_percent)}</span>
               </div>
             ) : (
-              <div className="text-sm text-green-500">Risk free</div>
+              <div className="text-sm text-green-500">Risk free{getRiskEmoji()}</div>
             )
           ) : (
             <div className="text-sm text-zinc-500">No stop loss</div>
