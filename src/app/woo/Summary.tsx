@@ -14,6 +14,7 @@ interface Props {
 export default function Summary({ accountDetail }: Props) {
   const {
     starting_balance,
+    target_percent,
     target_balance,
     available_balance,
     balance,
@@ -78,10 +79,10 @@ export default function Summary({ accountDetail }: Props) {
       <div
         className={cn(
           'flex w-full flex-col items-center rounded-xl border border-zinc-500 p-4',
-          equity_percent > 20 && 'border-4 border-green-500',
-          equity_percent > 40 && 'bg-green-500 bg-opacity-20',
-          equity_percent < -10 && 'border-4 border-red-500',
-          equity_percent < -20 && 'bg-red-500 bg-opacity-20',
+          equity_percent > target_percent * 100 && 'border-4 border-green-500',
+          equity_percent > target_percent * 100 * 2 && 'bg-green-500 bg-opacity-20',
+          equity_percent < target_percent * -100 && 'border-4 border-red-500',
+          equity_percent < target_percent * -100 * 2 && 'bg-red-500 bg-opacity-20',
         )}
       >
         <div className="flex w-full items-center">
